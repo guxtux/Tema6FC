@@ -1,0 +1,62 @@
+\documentclass[12pt]{beamer}
+\newenvironment{ConCodigo}[1]
+  {\begin{frame}[fragile,environment=ConCodigo]{#1}}
+  {\end{frame}}
+\graphicspath{{Imagenes/}{../Imagenes/}}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{hyperref}
+\usepackage{etex}
+\reserveinserts{28}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{tabulary}
+\usepackage{booktabs}
+\usepackage{nccmath}
+\usepackage{biblatex}
+\usepackage{epstopdf}
+\epstopdfsetup{outdir=./}
+\usepackage{graphicx}
+%\usepackage{enumitem,xcolor}
+\usepackage{siunitx}
+\sisetup{scientific-notation=true}
+%\usepackage{fontspec}
+\usepackage{lmodern}
+\usepackage{float}
+\usepackage[format=hang, font=footnotesize, labelformat=parens]{caption}
+\usepackage[autostyle,spanish=mexican]{csquotes}
+\usepackage{standalone}
+\usepackage{blkarray}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{tikz}
+\usepackage[siunitx]{circuitikz}
+\usetikzlibrary{arrows,patterns,shapes}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{arrows}
+\usepackage{color}
+\usepackage{xcolor}
+%\usepackage{beton}
+%\usepackage{euler}
+%\usepackage[T1]{fontenc}
+\usepackage[sfdefault]{roboto}  %% Option 'sfdefault' only if the base font of the document is to be sans serif
+\usepackage[T1]{fontenc}
+\renewcommand*\familydefault{\sfdefault}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+\usepackage{hyperref}
+\renewcommand {\arraystretch}{1.5}
+\newcommand{\python}{\texttt{python}}
+\usefonttheme[onlymath]{serif}
+\setbeamertemplate{navigation symbols}{}
+\usetikzlibrary{patterns}
+\usetikzlibrary{decorations.markings}
+\tikzstyle{every picture}+=[remember picture,baseline]
+%\tikzstyle{every node}+=[inner sep=0pt,anchor=base,
+%minimum width=2.2cm,align=center,text depth=.15ex,outer sep=1.5pt]
+%\tikzstyle{every path}+=[thick, rounded corners]
+\setbeamertemplate{caption}[numbered]
+\newcommand{\ptm}{\fontfamily{ptm}\selectfont}
+\input{pre_plantilla_Warsaw_albatross}

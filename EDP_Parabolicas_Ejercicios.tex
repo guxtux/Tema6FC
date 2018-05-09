@@ -1,0 +1,37 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{anyfontsize}
+\usepackage{anysize}
+\marginsize{1.5cm}{1.5cm}{0cm}{1.5cm}
+\author{M. en C. Gustavo Contreras Mayén.}
+\title{\begin{center}
+Ejercicios EDP Parabólicas \\ Curso Física Computacional
+\end{center}\end{large}}
+\date{ }
+\begin{document}
+\maketitle
+\fontsize{13}{13}\selectfont
+\begin{enumerate}
+\item \textbf{Prueba de estabilidad}. Revisa que la temperatura diverge con el tiempo si la constante $C$ en la ecuación, se hace más grande que $0.5$
+\item \textbf{Dependencia del material}. Repite el cálculo pero ahora para el aluminio, $C=0.217$ cal/(g °C), $K=0.49$ cal/(g °C), $r = 2.7$ g / cc
+\\
+Considera que la condición de estabilidad necesita que cambies el tamaño del paso en la variable temporal.
+\item \textbf{Escala}. La curva de temperatura contra tiempo puede ser la misma para diferentes materiales, pero no en escala.
+\\
+¿cuál de las dos barras anteriores se enfría más rápido?
+\item \textbf{Distribución senoidal inicial}. $\sin(\frac{\rho x}{L})$
+\\
+Utiliza las mismas constantes que en el primer ejemplo y realiza un ciclo de $3000$ pasos en el tiempo, guarda los valores cada $150$ pasos para que grafiques el enfriamiento de la barra. Puedes comparar los resultados con la solución analítica:
+\[ T(x,t) = \sin \left(\dfrac{\pi x}{L} \right) \exp(\frac{- \pi^{2} Rt}{L}) \hspace{1.5cm} R = \dfrac{k}{C \rho} \]
+\item \textbf{Enfriamiento de Newton}. Imagina ahora que la barra que estaba aislada, se deja en contacto con el ambiente que se encuentra a una temperatura $T_{a}$, tal que es diferente a la temperatura inicial de la barra.
+\\
+La ley de enfriamiento de Newton nos dice que la razón de cambio de la temperatura debido a la radiación es:
+\[ \dfrac{\partial T}{\partial t} = -h(T - T_{a}) \]
+La ecuación de calor se modifica para quedar:
+\[ \dfrac{\partial T(x,t)}{\partial t} = \dfrac{k}{C \rho} \dfrac{\partial^{2} T}{\partial x^{2}} - h T(x,t)\]
+Ajusta el algoritmo y el programa para introducir el término de enfriamiento de Newton a lo largo de la barra. Compara el enfriamiento de esta barra con el ejemplo de la barra aislada.
+\end{enumerate}
+\end{document}}

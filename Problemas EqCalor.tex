@@ -1,0 +1,62 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{anyfontsize}
+\usepackage{anysize}
+\marginsize{1.5cm}{1.5cm}{0cm}{1.5cm}
+\author{M. en C. Gustavo Contreras Mayén.}
+\title{\begin{center}
+Problemas adicionales EDP Parabólicas \\ Curso Física Computacional
+\end{center}}
+\date{ }
+\begin{document}
+\maketitle
+\fontsize{13}{13}\selectfont
+\begin{enumerate}
+\item \textbf{Prueba de estabilidad}: Revisa que la temperatura diverge con el tiempo si la constante $C$ en la ecuaci\'{o}n, se hace m\'{a}s grande que $0.5$.
+\item \textbf{Dependencia del material}. Repite el c\'{a}lculo pero ahora para el aluminio, $C=0.217$ cal/(g ${}^{\circ}$C), $K=0.49$ cal/(g ${}^{\circ}$C), $\rho = 2.7$ g/cc 
+\\ 
+\\
+Considera que la condici\'{o}n de estabilidad necesita que cambies el tamaño del paso en la variable temporal.
+\\
+\\
+¿A qué se refiere la indicaci\'{o}n sobre la condici\'{o}n de estabilidad?
+\\
+\\
+A partir del m\'{e}todo de diferencias finitas, obtuvimos una expresi\'{o}n discreta:
+\[ T(i,j+1)=T(i,j) + \dfrac{K \Delta t [T(i+1,j) + T(i-1,j) - 2T(i,j)]}{C \rho (\Delta x)^{2}} \]
+donde $x = i \Delta x$ y $ t= t \Delta t$
+\\
+\\
+Normalmente las EDP se resuelven transform\'{a}ndolas a ecuaciones en diferencias finitas y entonces, apoyarnos con la computadora para encontrar la soluci\'{o}n num\'{e}rica de esas ecuaciones en diferencias finitas. As\'{i} mismo, es posible encontrar soluciones anal\'{i}ticas de las EDP y comparar los resultados de la soluci\'{o}n num\'{e}rica contra las soluciones anal\'{i}ticas, aunque en problemas reales, o con condiciones de frontera m\'{a}s complejas, encontrar las soluciones anal\'{i}ticas es dif\'{i}cil o imposible. Lo que se hace en esos casos, es ajustar una solución anal\'{i}tica ''parecida'' a nuestro problema y contrastar las soluciones.
+\\
+\\
+La ecuaci\'{o}n de calor es un caso interesante ya que es posible obtener una solución anal\'{i}tica a partir de la ecuaci\'{o}n en diferencias finitas:
+\[  T(i,j) = A \left[  1 - 4 \dfrac{K}{C \rho} \dfrac{\Delta t}{(\Delta x)^{2}}  \sin^{2} \left( \dfrac{i \pi \Delta x}{2l} \right) \right]^{j} \sin \left( \dfrac{i \pi \Delta x}{l} \right) \]
+\textbf{Nota: } Esta solución anal\'{i}tica a la ecuaci\'{o}n de diferencias finitas NO es v\'{a}lida como soluci\'{o}n de la EDP, pero nos ayuda a entender el algoritmo. Si comparamos la soluci\'{o}n anal\'{i}tica de la EDP:
+\[ T(x,t) = \sum_{n=1,3,\ldots}^{\infty} \dfrac{4T_{0}}{n \pi} \exp(-n^{2} \pi^{2}Kt/(L^{2} C \rho)) \sin \left( \dfrac{n \pi x}{L} \right)  \]
+vemos que la soluci\'{o}n decae exponencialmente con el tiempo, pero esto no se cumple para la soluci\'{o}n num\'{e}rica, a menos que:
+\[ \dfrac{K}{C \rho} \dfrac{\Delta t}{(\Delta x)^{2}} \leq \dfrac{1}{4} \]
+Si esta condici\'{o}n no se cumple, la soluci\'{o}n numérica no decaer\'{a} en el tiempo y por tanto, estar\'{a} mal, as\'{i} mismo, nos dice que si hacemos un cambio m\'{a}s pequeño en el tiempo, mejoraremos la convergencia, pero si reducimos el valor en el paso de posici\'{o}n sin un incremento cuadr\'{a}tico simult\'{a}neo al paso de tiempo, la convergencia empeora; lo que hay que hacer es intentar con diferentes combinaciones de $\Delta x$ y $\Delta t$ hasta obtener una soluci\'{o}n estable y razonable.
+\item \textbf{Escala}: La curva de temperatura contra tiempo puede ser la misma para diferentes materiales, pero no en escala.
+\\
+\\
+¿cu\'{a}l de las dos barras anteriores se enfr\'{i}a m\'{a}s r\'{a}pido?
+\item \textbf{Distribuci\'{o}n senoidal inicial}: $\sin( \pi x / L)$
+\\
+Utiliza las mismas constantes que en el primer ejemplo y realiza un ciclo de 3000 pasos en el tiempo, guarda los valores cada 150 pasos para que grafiques el enfriamiento de la barra. Puedes comparar los resultados con la soluci\'{o}n anal\'{i}tica:
+\[ T(x,t) = \sin \left( \dfrac{\pi x}{L} \right) \exp(-\dfrac{\pi^{2}RT}{L^{2}}), \hspace{1cm} R=\dfrac{K}{C \rho} \]
+\item \textbf{Dos barras en contacto}: Supongamos que tenemos dos barras id\'{e}nticas, de 25 cm de longitud. Una de ellas se mantiene a $100^{\circ}$C y la otra a $50^{\circ}$C, se ponen en contacto a lo largo de su eje y los otros extremos se dejan a $0^{\circ}$C.
+\\
+Determina c\'{o}mo var\'{i}a la temperatura con respecto a la posici\'{o}n y al tiempo.
+\item \textbf{Enfriamiento de Newton}: Imagina ahora que la barra que estaba aislada, se deja en contacto con el ambiente que se encuentra a una temperatura $T_{a}$, tal que es diferente a la temperatura inicial de la barra.
+\\
+La ley de enfriamiento de Newton nos dice que la raz\'{o}n de cambio de la temperatura debido a la radiaci\'{o}n es:
+\[ \dfrac{\partial T}{\partial t} = - h (T- T_{a}) \]
+La ecuaci\'{o}n de calor se modifica para quedar:
+\[ \dfrac{\partial T(x,t)}{\partial t} = \dfrac{K}{C \rho} \dfrac{\partial^{2}T}{\partial x^{2}} - h T(x,t)\]
+Ajusta el algoritmo y el programa para introducir el t\'{e}rmino de enfriamiento de Newton a lo largo de la barra. Compara el enfriamiento de esta barra con el ejemplo de la barra aislada.
+\end{enumerate}
+\end{document}

@@ -1,0 +1,18 @@
+\documentclass[tikz]{standalone}
+\usepackage[utf8x]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\begin{document}
+\begin{tikzpicture}[font=\small]
+	\draw [line width=3pt] (0,3) -- (4,3);
+	\draw (2, 3.5) node {$100 V$};
+	\draw (2, -0.3) node {$0 V$};
+	\draw [dashed] (0,2.8) -- (0,0);
+	\draw [dashed] (0,0) -- (4,0);
+	\draw [dashed] (4,0) -- (4,2.8);
+	\draw (0.5, 0) -- (0.5,-0.3);
+	\draw (0.2,-0.3) -- (0.8,-0.3);
+	\draw (0.3,-0.4) -- (0.7,-0.4);
+	\draw (0.4,-0.5) -- (0.6,-0.5);
+\end{tikzpicture}
+\end{document}

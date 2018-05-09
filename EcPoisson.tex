@@ -1,0 +1,47 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsthm} 
+\usepackage{anysize}
+\marginsize{2cm}{2cm}{2cm}{2cm}  
+\title{Ecuaciones en diferencias para la ecuación de Poisson}
+\author{M. en C. Gustavo Contreras Mayén}
+\date{Noviembre de 2008}
+\begin{document}
+\maketitle
+Con la geometría y la retícula que aparecen en la figura, determinar las ecuaciones en diferencias para la ecuación de Poisson:
+\begin{equation}\label{eq:Poisson}
+- \nabla^{2}\phi=S
+\end{equation}
+Las condiciones de frontera son:
+%\begin{eqnarray}
+\begin{align}
+\frac {\partial \phi}{\partial x} & = \phi \text{\hspace{1.5cm} para la frontera izquierda} \nonumber \\
+\nonumber \\
+\frac {\partial \phi}{\partial y} & = \phi - 2 \text{\hspace{0.7cm} para la frontera inferior}\nonumber \\
+\nonumber \\
+\phi & = 5 \text{\hspace{1.5cm} para la frontera derecha}\nonumber \\
+\nonumber \\
+\phi & = 7 \text{\hspace{1.5cm} para la frontera superior}\nonumber
+\end{align}
+%\end{eqnarray}
+Los intervalos de la malla son unitarios en ambas direcciones.\\
+\\
+\textbf{Solución:}\\
+Dado que las condiciones en las fronteras superior e inferior son del tipo de valor fijo, obtenemos las ecuaciones en diferencias sólo para los siguientes cuatro puntos de la malla: (1,1), (2,1), (1,2), (2,2).\\
+\\
+\textit{Punto (1,1)}. Aproximamos la derivada parcial con respecto a $x$ por:
+\begin{eqnarray}\label{eq:par11x}
+\left( \frac {\partial \phi^{2}}{\partial x^{2}}\right)_{1,1} & = & \dfrac{\left( \dfrac {\partial \phi}{\partial x}\right)_{1+\frac{1}{2},1} - \ \left( \dfrac {\partial \phi}{\partial x}\right)_{1,1}}{\dfrac{1}{2}}  \nonumber \\
+& = & \dfrac {(\phi_{2,1}-\phi_{1,1})-\phi_{1,1}}{\dfrac{1}{2}} \nonumber \\
+& = & -4\phi_{1,1}+2\phi_{2,1} %\tag*{(2)}
+\end{eqnarray}
+en donde utilizaremos la condición de frontera izquierda para eliminar $\left( \frac{\partial \phi}{\partial x}\right)_{1,1}$. La derivada parcial con respecto a $y$ se aproxima por:
+\begin{eqnarray}\label{eq:par11y}
+\left( \frac {\partial \phi^{2}}{\partial y^{2}}\right)_{1,1} & = & \dfrac{\left( \dfrac {\partial \phi}{\partial y}\right)_{1,1+\frac{1}{2}} - \ \left( \dfrac {\partial \phi}{\partial y}\right)_{1,1}}{\dfrac{1}{2}}  \nonumber \\
+& = & \dfrac {(\phi_{1,2}-\phi_{1,1})-\phi_{1,1}-2}{\dfrac{1}{2}} \nonumber \\
+& = & -4\phi_{1,1}+2\phi_{1,2}+4 %\tag*{(2)}
+\end{eqnarray}
+donde utilizamos la condición de frontera inferior para eliminar $\left( \frac{\partial \phi}{\partial y}\right)_{1,1}$. Sustituimos \ref{eq:par11x} y \ref{eq:par11y} en la ecuación de Poisson
+\end{document}

@@ -1,0 +1,28 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsthm} 
+%\usepackage{amsmfonts}
+\usepackage{anysize}
+\marginsize{2cm}{2cm}{2cm}{2cm}  
+\title{Ecuación de Laplace \\\begin{Large} Curso de Física Computacional\end{Large}}
+\author{M. en C. Gustavo Contreras Mayén}
+\date{ }
+\begin{document}
+\maketitle
+En este ejercicio se trata de resolver la ecuación de Laplace para un cable coaxial,
+de sección interior circular (radio $r=0.1 cm$) y de sección exterior cuadrada (lado
+$l=1.0 cm$). La sección interior se encuentra a $100 V$ y la interior conectada a tierra ($0 V$). La ecuación es:
+\begin{equation}
+\frac{\partial^{2}u}{\partial x^{2}}+\frac{\partial^{2}u}{\partial y^{2}}=0
+\end{equation}
+para resolverla usaremos una malla discreta con la siguiente ecuación:
+\begin{equation}
+u_{ij}= \dfrac{\dfrac{u_{i+1,j}}{f_{1}f_{1}+f_{3}} + \dfrac {u_{i,j+1}}{f_{2}(f_{2}+f_{4})} + \dfrac {u_{i-1,j}}{f_{3}(f_{1}+f_{3})} +\dfrac{u_{i,j-1}}{f_{4}(f_{1}+f_{3})}}{\dfrac{1}{f_{1}f_{3}}+\dfrac{1}{f_{2}f_{4}}}
+\end{equation}
+Los valores de $f_{i}$ hacen referencia a si el punto se encuentra cerca de otro en el que el valor de la función se conoce exactamente o bien se encuentra cerca de una condición de contorno dada en un contorno irregular. Como en realidad nosotros no conoceremos todos los puntos que se necesitan en la anterior ecuación, trabajaremos haciendo una serie de iteraciones en las que vayamos obteniendo nuevos valores con los que trabajar. Es decir, se parte de unos valores del potencial en la malla más o menos caprichosos (salvo los que se corresponden a las condiciones de contorno del problema, que son fijas), y con esos valores obtenemos todos los valores nuevos del potencial en la malla. Con estos valores volvemos a repetir el proceso, obteniendo unos nuevos valores, y así sucesivamente (modelo Gauss-Seidel). Se requerirán bastantes iteraciones, pero esto tampoco consume excesivo tiempo.
+\\
+En las líneas $(1-44)$ se definen una serie de valores que se necesitarán. Las iteraciones se inician en la línea $(48)$. Por si fueran modificadas durante el proceso, las condiciones de contorno de la sección cuadrada se reinician otra vez en las líneas $(50-54)$. El recorrido de la malla para cada iteración comienza en las líneas $(61-62)$. En $(63-66)$ se le asigna a las $f_{i}$ un valor $f_{i}=1.0$, y se usará ese valor si no se indica lo contrario. Se excluyen los cálculos en el interior de la sección circular mediante las líneas $(67-68)$. El cálculo de las $f_{i}$, y de las condiciones que llevan a su definición y su uso se hace en las líneas $(71-98)$.
+Ello se hace en base a sencillas consideraciones geométricas. A partir de estos cálculos de los $f_{i}$, definimos los valores de los sumandos que aparecen en nuestra discretización de la ecuación, y calculamos el valor de $u_{i,j}$, en las líneas $(100-104)$. Después se calcula el potencial en los puntos simétricos del cuadrado, y se cierra el ciclo, para una nueva iteración con los valores recién calculados. Finalmente, los datos se escriben en el archivo \textit{cablelaplace.dat}. Estos datos pueden ser representados mediante GNUPLOT.
+\end{document}
