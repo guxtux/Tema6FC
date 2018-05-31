@@ -1,0 +1,1058 @@
+\include{pre_documento}
+\usepackage{siunitx}
+\input{../Preambulos/pre_codigo}
+\include{pre_define_footers}
+\normalfont
+\usepackage{ccfonts}% http://ctan.org/pkg/{ccfonts}
+\usepackage[T1]{fontenc}% http://ctan.or/pkg/fontenc
+\renewcommand{\rmdefault}{cmr}% cmr = Computer Modern Roman
+\newcommand{\funcionazul}[1]{\textcolor{blue}{\textbf{\texttt{#1}}}}
+\linespread{1.3}
+\title{Ecuaciones diferenciales parciales}
+\subtitle{Curso de Física Computacional}
+\author{M. en C. Gustavo Contreras Mayén}
+\setbeamercolor{background canvas}{bg=blue!15}
+\setbeamercolor{section in toc}{fg=blue}
+\setbeamercolor{subsection in toc}{fg=blue!85}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{frametitle}{fg=white}
+\setbeamercolor{section number projected}{bg=black,fg=yellow}
+\setbeamercolor{section number shaded}{bg=white, fg=green}
+\newcounter{saveenumi}
+\newcommand{\seti}{\setcounter{saveenumi}{\value{enumi}}}
+\newcommand{\conti}{\setcounter{enumi}{\value{saveenumi}}}
+
+\begin{document}
+\maketitle
+\fontsize{14}{14}\selectfont
+\spanishdecimal{.}
+\frame{\tableofcontents[currentsection, hideallsubsections]}
+\section{Ecuaciones Diferenciales Parciales}
+\frame{\tableofcontents[currentsection, hideothersubsections]}
+\subsection{Introducción}
+%Referencia del Titus - Capítulo 13
+\begin{frame}
+\frametitle{Naturaleza de las EDP}
+Las ecuaciones diferenciales parciales (EDP) surgen en general, en relación con fenómenos que tienen lugar en sistemas continuos, en los que las cantidades varían en el espacio y el tiempo.
+\\
+\bigskip
+\pause
+Estos procesos son diversos: transporte de calor y masa, propagación de ondas mecánicas, electromagnéticas o mecánicas cuánticas, etc.
+\end{frame}
+\begin{frame}
+\frametitle{Naturaleza de las EDP}
+Aparte de un número relativamente pequeño de casos simples, en los que las soluciones pueden expresarse en forma cerrada, es necesario recurrir a métodos numéricos para resolver las ecuaciones subyacentes.
+\end{frame}
+\begin{frame}
+\frametitle{Resolviendo las EDP}
+Típicamente, usando ciertos esquemas de discretización, la ecuación diferencial se convierte en una ecuación matricial, teniendo como incógnitas los valores de la solución en los nodos de una malla espacio-tiempo.
+\end{frame}
+\begin{frame}
+\frametitle{Resolviendo las EDP}
+Aunque la ecuación matricial resultante puede resolverse en principio, por cualquiera de los métodos generales (eliminación gaussiana, factorización LU, etc.), la dimensión del sistema para problemas de interés práctico (del orden de miles) suele hacer inoperable tal enfoque.
+\end{frame}
+\begin{frame}
+\frametitle{Resolviendo las EDP}
+El carácter local de las EDP consideradas (que contienen sólo derivadas de bajo orden), así como el \emph{carácter local} de los esquemas de discretización aplicados a los operadores diferenciales (implicando sólo puntos de malla vecinos), genera con mayor frecuencia, que el sistema discretizado de ecuaciones sea el de una matriz dispersa: con elementos no nulos en sólo unas pocas diagonales.
+\end{frame}
+\begin{frame}
+\frametitle{Resolviendo las EDP}
+Para tales matrices dispersas, existen técnicas especiales de inversión.
+\\
+\bigskip
+Muchas de las EDP de importancia práctica en la física son ecuaciones de segundo orden, que contienen derivadas parciales de la función desconocida hasta el segundo orden y que suelen tener como variables independientes o bien coordenadas espaciales o espaciales y temporales.
+\end{frame}
+\subsection{Forma general de las EDP}
+\begin{frame}
+\frametitle{Forma general de las EDP}
+Por simplicidad en problemas lineales en dos variables, las EDP tiene la forma genérica:
+\[ \begin{split}  a \: (x,y) \: \dfrac{\partial^{2} u}{\partial x^{2}} &+ b \: (x,y) \: \dfrac{\partial^{2} u}{\partial x \: \partial y} + c \: (x,y) \: \dfrac{\partial^{2} u}{\partial y^{2}} + \\
+&+ d \: (x,y) \: \dfrac{\partial u}{\partial x} + e \: (x,y) \: \dfrac{\partial u}{\partial y} + \\
+&+ g \: (x,y) \: u = f(x,y) \end{split} \]
+\end{frame}
+\begin{frame}
+\frametitle{Forma general de las EDP}
+Donde $(x, y) \in D$ (dominio en el plano $x-y$) y la condición $a^{2} (x, y) + b^{2} (x, y) + c^{2} (x, y)> 0$ debe mantenerse en todas partes en $D$.
+\\
+\bigskip
+Las EDP pueden clasificarse de acuerdo con la información de sus curvas de propagación en:
+\end{frame}
+\begin{frame}
+\frametitle{Clasificación de la EDP}
+\setbeamercolor{item projected}{bg=red!70!black,fg=white}
+\setbeamertemplate{enumerate items}[circle]
+\begin{enumerate}[<+->]
+\item Elípticas, si $b^{2} - 4 \: a\: c < 0$ para todo $(x,y) \in D$
+\item Parabólicas, si $b^{2} - 4 \: a \: c = 0$ para todo $(x,y) \in D$
+\item Hiperbólicas, si $b^{2} - 4 \: a \: c > 0$ para todo $(x,y) \in D$
+\end{enumerate}
+\end{frame}
+\section{Tipos de EDP}
+\frame{\tableofcontents[currentsection, hideothersubsections]}
+\subsection{EDP Elíptica}
+\begin{frame}
+\frametitle{EDP elíptica}
+Considera la ecuación de Poisson
+\[ \dfrac{\partial^{2} \: u}{\partial x^{2}} + \dfrac{\partial^{2} \: u}{\partial y^{2}} = f(x, y) \]
+En el caso de que no se incluya el término fuente $f(x, y)$, recuperamos la ecuación de Laplace.
+\end{frame}
+\begin{frame}
+\frametitle{EDP elíptica}
+Las ecuaciones diferenciales parciales de tipo elíptico están dominadas por las derivadas homogéneas de segundo orden, que aparecen en términos que tienen el mismo signo.
+\end{frame}
+\begin{frame}
+\frametitle{EDP elíptica}
+Estas ecuaciones modelan de manera natural fenómenos estacionarios, por ejemplo tenemos: la ecuación estacionaria de calor, la ecuación de Poisson para el potencial electrostático y la ecuación de Schrödinger independiente del tiempo.
+\end{frame}
+\subsection{EDP Parabólica}
+\begin{frame}
+\frametitle{EDP parabólica}
+Ejemplos clásicos de las EDP parabólicas son las ecuaciones de difusión y de calor:
+\[ \dfrac{\partial u}{\partial x} - \dfrac{\partial}{\partial x} \left( D \: \dfrac{\partial u}{\partial x} \right) = 0 \hspace{1.5cm} \dfrac{\partial u}{\partial t} - K \: \dfrac{\partial^{2} u}{\partial x^{2}}  = f(x,y) \]
+\pause
+donde la evolución está descrita en las derivadas de primer orden, $D$ es el coeficiente de difusión y $K > 0$ es la coeficiente de difusión térmica.
+\end{frame}
+\subsection{EDP Hiperbólica}
+\begin{frame}
+\frametitle{EDP hiperbólica}
+El ejemplo clásico para la EDP hiperbólica es la \emph{ecuación de onda}:
+\[ \dfrac{\partial^{2} u}{\partial t^{2}}  - v^{2} \: \dfrac{\partial^{2} u}{\partial x^{2}} = 0 \]
+que incluye derivadas temporales y espaciales de segundo orden con signos contrarios, $v$ es la velocidad de fase de la onda.
+\end{frame}
+\section{Condiciones de frontera}
+\frame{\tableofcontents[currentsection, hideothersubsections]}
+\subsection{Tipos de CDF}
+\begin{frame}
+\frametitle{CDF y solución de las EDP}
+En general, para obtener una solución determinada de una EDP, que corresponde a una situación física bien definida, también es necesario especificar las condiciones en donde se desarrolla, resultando ya sea en un problema de valores en la frontera o un problema de valores iniciales (condiciones de Cauchy).
+\end{frame}
+\begin{frame}
+\frametitle{CDF y solución de las EDP}
+Los problemas de los valores en la frontera están típicamente asociados con EDP elípticas y modelan fenómenos de equilibrio, para los cuales la evolución en el tiempo es irrelevante.
+\\
+\bigskip
+Dada la ausencia de dependencia temporal, se busca una solución en un estado estacionario $u(x, y)$ que satisface la ecuación diferencial en un cierto dominio $D$, así como las condiciones de contorno asociadas. 
+\end{frame}
+\subsection{Clasificación de CDF}
+\begin{frame}
+\frametitle{Clasificación de CDF}
+\framesubtitle{Condiciones de tipo Dirichlet}
+Se especifican los valores solución en la frontera
+\[ u(x, y) = u_{S}(x, y) \hspace{0.75cm} \mbox{ para } (x, y) \in S \]
+\end{frame}
+\begin{frame}
+\frametitle{Clasificación de CDF}
+\framesubtitle{Condiciones de tipo Neumann}
+Se definen las derivadas normales en la frontera
+\[ \dfrac{\partial u}{\partial \mathbf{n}} (x, y) = v_{S}(x, y) \hspace{0.75cm} \mbox{ para } (x, y) \in S \]
+\end{frame}
+\begin{frame}
+\frametitle{Clasificación de CDF}
+\framesubtitle{Condiciones mixtas}
+Involucran combinaciones lineales tanto de valores solución de la función y de la derivada en la frontera
+\[ \alpha(x, y) \: u(x, y) + \beta(x, y) \: \dfrac{\partial u}{\partial \mathbf{n}} = \gamma(x, y) \hspace{0.5cm} \mbox{ para } (x, y) \in S \]
+\end{frame}
+\begin{frame}
+\frametitle{Problemas de valores iniciales}
+Los problemas de valor inicial (condiciones de Cauchy) naturalmente se asocian con ecuaciones parabólicas o hiperbólicas y típicamente modelan fenómenos de propagación.
+\end{frame}
+\begin{frame}
+\frametitle{Problemas de valores iniciales}
+Específicamente, basándose en el comportamiento espacial conocido de la solución (y posiblemente también de su derivada temporal) en algún momento inicial $t_{0}$, la ecuación diferencial gobierna la propagación de la solución $u(x, t)$ en el espacio y el tiempo.
+\end{frame}
+\begin{frame}
+\frametitle{Elección de la técnica de solución}
+Desde una perspectiva numérica, la clasificación según el tipo de problema tiende a prevalecer sobre el tipo de ecuación, ya que el carácter de las CDF es uno de los aspectos críticos para decidir la estrategia numérica.
+\end{frame}
+\begin{frame}
+\frametitle{Elección de la técnica de solución}
+Las diferencias conceptuales entre las condiciones de frontera y los problemas de valores iniciales se sugieren en la siguientes figuras:
+\end{frame}
+\begin{frame}
+\captionsetup{font=scriptsize,labelfont=scriptsize}
+\frametitle{Condiciones con valores en la frontera}
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.5]{condicionesEDP_01.eps}
+	\caption{Malla/rejilla para implementar la solución. Los puntos negros indican los valores de frontera, mientras que los puntos blancos, es donde debe de calcularse la solución.}
+\end{figure}
+\end{frame}
+\begin{frame}
+\captionsetup{font=scriptsize,labelfont=scriptsize}
+\frametitle{Condiciones con valores iniciales}
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.45]{condicionesEDP_02.eps}
+	\caption{Se parte de un tiempo inicial $t_{0}$ y evoluciona en el tiempo $t$. Los puntos negros indican los valores de frontera, mientras que los puntos blancos, es donde debe de calcularse la solución.}
+\end{figure}
+\end{frame}
+\begin{frame}
+\frametitle{Solución a los problemas}
+Aunque el objetivo principal de ambos tipos de problemas es el cálculo de la solución en una red espacial, la solución de estado estacionario para problemas con CDF se determina mediante un proceso numérico que converge simultáneamente en todo el dominio $D$.
+\end{frame}
+\begin{frame}
+\frametitle{Solución a los problemas}
+Mientras que en el caso de valores iniciales, la solución de todos los puntos en el dominio espacial, se propagan de manera recursiva en el tiempo, iniciando la solución a partir del instante $t_{0}$.
+\end{frame}
+\section{Solución de EDP Elípticas}
+\frame{\tableofcontents[currentsection, hideothersubsections]}
+\subsection{CDF para EDP Elípticas}
+\begin{frame}
+\frametitle{Problemas CDF para EDP Elípticas}
+Para revisar el proceso de discretización para problemas de CDF, consideremos la ecuación 2D de la ecuación de Poisson:
+\begin{equation}
+\nabla^{2} \: u(x, y) = \dfrac{\partial^{2} u}{\partial x^{2}} + \dfrac{\partial^{2} u}{\partial y^{2}} = f(x, y)
+\label{eq:ecuacion_13_01}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Problemas CDF para EDP Elípticas}
+Escogemos un dominio rectangular de integración 
+\[ D = [x_{\mbox{min}}, x_{\mbox{max}} ] \times [y_{\mbox{min}}, y_{\mbox{max}} ]  \]
+y se establecen las condiciones de frontera mixtas
+\begin{equation}
+\left[ \alpha \: u + \beta \: \dfrac{\partial u}{\partial n} \right]_{(x, y) \in S} = \gamma
+\label{eq:ecuacion_13_02}
+\end{equation}
+donde $\alpha(x, y)$, $\beta(x, y)$ y $\gamma(x, y)$ son funciones definidas en el dominio $S$.
+\end{frame}
+\begin{frame}
+\frametitle{Problemas CDF para EDP Elípticas}
+En particular, tenemos
+\setbeamercolor{item projected}{bg=red!70!black,fg=white}
+\setbeamertemplate{enumerate items}[circle]
+\begin{enumerate}[<+->]
+\item \emph{condiciones de Dirichlet} para $\beta = 0$ (valores de solución fijos)
+\item \emph{condiciones de Neumann} para $\alpha = 0$ (derivadas normales fijas)
+\item \emph{condiciones uniformes} para $\gamma = 0$
+\end{enumerate}
+\end{frame}
+\begin{frame}
+\frametitle{Uso de diferencias finitas}
+Siguiendo la aproximación por el método de diferencias finitas, acotamos la solución para los valores $N_{x} \times N_{y}$ tal que $u_{ij} = u(x_{i}, y_{j})$ en los nodos de la malla espacial definida por
+\begin{align*}
+x_{i} = x_{\text{min}} + (i - 1) \: h_{x}, \hspace{0.5cm} i = 1, 2, \ldots, N_{x} \\
+y_{i} = y_{\text{min}} + (j - 1) \: h_{y}, \hspace{0.5cm} j = 1, 2, \ldots, N_{y}
+\end{align*}
+\\
+\bigskip
+\pause
+donde $h_{x}$ y $h_{y}$ corresponde al espaciamiento en la malla en las dos direcciones.
+\end{frame}
+\begin{frame}
+\frametitle{Malla para la solución}
+\captionsetup{font=small,labelfont=small}
+\begin{figure}
+	\centering
+	\includestandalone[scale=0.75]{mallaSolucionEDP_01}
+	\caption{Discretización de la malla para resolver la EDP.}
+	\label{fig:figura_01}
+\end{figure}
+\end{frame}
+\begin{frame}
+\frametitle{Uso de diferencias finitas}
+Similarmente a las técnicas de diferencias finitas, nos aproximamos al operador laplaciano $\nabla^{2}$ partiendo de la serie de Taylor de la solución en los puntos interiores del dominio $D$.
+\\
+\bigskip
+En particular, a lo largo de la dirección $x$ tenemos, respectivamente, las diferencias hacia atrás y hacia delante:
+\end{frame}
+\begin{frame}
+\frametitle{Uso de diferencias finitas}
+Diferencias hacia atrás y hacia adelante
+\fontsize{12}{12}\selectfont
+\begin{align*}
+u_{i-1, j} &= u_{i, j} - \dfrac{h_{x}}{1!} \left( \dfrac{\partial u}{\partial x} \right)_{i, j} + \dfrac{h_{x}^{2}}{2!} \left( \dfrac{\partial^{2} u}{\partial x^{2}} \right)_{i, j} - \dfrac{h_{x}^{3}}{3!} \left( \dfrac{\partial^{3} u}{\partial x^{3}} \right)_{i, j} + O(h_{x}^{4})  \\
+u_{i+1, j} &= u_{i, j} + \dfrac{h_{x}}{1!} \left( \dfrac{\partial u}{\partial x} \right)_{i, j} + \dfrac{h_{x}^{2}}{2!} \left( \dfrac{\partial^{2} u}{\partial x^{2}} \right)_{i, j} + \dfrac{h_{x}^{3}}{3!} \left( \dfrac{\partial^{3} u}{\partial x^{3}} \right)_{i, j} + O(h_{x}^{4})
+\end{align*}
+\end{frame}
+\begin{frame}
+\frametitle{Uso de diferencias finitas}
+La expresión de diferencias finitas para la segunda derivada es
+\begin{equation}
+\left( \dfrac{\partial^{2} u}{\partial x^{2}} \right)_{i,j} = \dfrac{u_{i+1, j} - 2 \: u_{i, j} + u_{i-1,j}}{h_{x}^{2}} + O(h_{x}^{2})
+\label{eq:ecuacion_13_03}
+\end{equation}
+\pause
+De manera análoga, para la segunda derivada en la dirección $y$ es:
+\begin{equation}
+\left( \dfrac{\partial^{2} u}{\partial y^{2}} \right)_{i,j} = \dfrac{u_{i, j+1} - 2 \: u_{i, j} + u_{i, j-1}}{h_{y}^{2}} + O(h_{y}^{2})
+\label{eq:ecuacion_13_04}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Uso de diferencias finitas}
+Entonces, para el laplaciano de la función $u$ en el nodo $(x_{i}, y_{i})$, hay un esquema de diferencia en cinco puntos, que se correlaciona con la representación gráfica en la figura (\ref{fig:figura_01})
+\end{frame}
+\begin{frame}
+\frametitle{El laplaciano de $u$}
+\begin{align}
+\begin{aligned}
+\nabla^{2} u(x,y) \vert_{i,j} &= \dfrac{1}{h_{y}^{2}} \: u_{i, j-1} + \dfrac{1}{h_{x}^{2}} \: u_{i-1, j} + \\
+&- 2 \: \left( \dfrac{1}{h_{x}^{2}} + \dfrac{1}{h_{y}^{2}} \right) \: u_{i, j}  + \dfrac{1}{h_{x}^{2}} \: u_{i+1, j}  + \\
+&+ \dfrac{1}{h_{y}^{2}} \: u_{i, j+1} + O(h_{x}^{2} + h_{y}^{2})
+\end{aligned}
+\label{eq:ecuacion_13_05}
+\end{align}
+\end{frame}
+\begin{frame}
+\frametitle{Uso de diferencias finitas}
+Con ello se obtiene la siguiente expresión de diferencias finitas de la ecuación de Poisson en los puntos interiores del dominio $D$:
+\begin{align}
+\begin{aligned}
+\dfrac{1}{h_{y}^{2}} \: u_{i, j-1} &+ \dfrac{1}{h_{x}^{2}} \: u_{i-1, j} - 2 \: \left( \dfrac{1}{h_{x}^{2}} + \dfrac{1}{h_{y}^{2}} \right) \: u_{i, j} + \\
+&+ \dfrac{1}{h_{x}^{2}} \: u_{i+1, j} + \dfrac{1}{h_{y}^{2}} \: u_{i, j+1} = f_{i, j} \\
+\\
+i &= 2, \ldots, N_{x-1}, \hspace{0.7cm} j = 2, \ldots, N_{y-1}
+\end{aligned}
+\label{eq:ecuacion_13_06}
+\end{align}
+donde $f_{i, j} = f(x_{i}, y_{j})$.
+\end{frame}
+\begin{frame}
+\frametitle{Discretización del problema}
+El sistema lineal (\ref{eq:ecuacion_13_06}), teniendo como incógnitas los valores de la solución $u_{i, j}$ en los nodos de la malla, no contiene realmente suficientes ecuaciones para que la solución sea completamente determinada. 
+\end{frame}
+\begin{frame}
+\frametitle{Discretización del problema}
+Por otra parte, el esquema de discretización de cinco puntos empleado para el laplaciano impide la incorporación directa de las condiciones de frontera, que han de ser tratadas por separado.
+\end{frame}
+\begin{frame}
+\frametitle{Discretización del problema}
+Muy a menudo, el proceso de discretización de las condiciones de frontera es más intrincado que la discretización de las EDP mismas.
+\\
+\bigskip
+En aras de la claridad, utilizamos en lo siguiente las aproximaciones de orden inferior para las condiciones de frontera mixtas.
+\end{frame}
+\begin{frame}
+\frametitle{Discretización del problema}
+Concretamente, considerando que las derivadas normales son positivas si están orientadas hacia fuera desde el dominio $D$, las condiciones límite a la izquierda y a la derecha ($i = 1$ e $i = N_{x}$) pueden expresarse como:
+\[ \alpha_{j}^{x_{\text{\tiny{min}}}} \: u_{1, j} + \beta_{j}^{x_{\text{\tiny{min}}}} \: \dfrac{u_{1, j} - u_{2, j}}{h_{x}} = \gamma_{j}^{x_{\text{\tiny{min}}}} \hspace{1cm} i = 1  \]
+\[ \alpha_{j}^{x_{\mbox{\tiny{max}}}} \: u_{N_{x}, j} + \beta_{j}^{x_{\text{\tiny{max}}}} \: \dfrac{u_{N_{x}, j} - u_{N_{x-1}, j}}{h_{x}} = \gamma_{j}^{x_{\text{\tiny{max}}}} \hspace{1cm} i = N_{x} \]
+\[ j = 1, \ldots, N_{y}  \]
+\end{frame}
+\begin{frame}
+\frametitle{Discretización del problema}
+De manera similar, las condiciones de discretización para la frontera inferior y superior ($j = 1$ y $N_{y}$)
+\[ \alpha_{i}^{y_{\text{\tiny{min}}}} \: u_{i, 1} + \beta_{i}^{y_{\text{\tiny{min}}}} \: \dfrac{u_{i, 1} - u_{i, 2}}{h_{y}} = \gamma_{i}^{x_{\text{\tiny{min}}}} \hspace{1cm} j = 1  \]
+\[ \alpha_{i}^{y_{\text{\tiny{max}}}} \: u_{i, N} + \beta_{i}^{y_{\text{\tiny{max}}}} \: \dfrac{u_{i, N_{y}} - u_{i, N_{y-1}}}{h_{y}} = \gamma_{i}^{y_{\text{\tiny{max}}}} \hspace{1cm} j = N_{y} \]
+\[ i = 1, \ldots, N_{x}  \]
+\end{frame}
+\begin{frame}
+\frametitle{Simplificación en la notación}
+Para simplificar las ecuaciones discretizadas y las CDF, definimos las siguientes cantidades
+\begin{equation}
+k_{x} = \dfrac{1}{h_{x}^{2}}, \hspace{0.5cm} k_{y} = \dfrac{1}{h_{y}^{2}}, \hspace{0.5cm} k_{xy} = 2 \: \left( \dfrac{1}{h_{x}^{2}} + \dfrac{1}{h_{y}^{2}} \right)
+\label{eq:ecuacion_13_07}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Simplificación de las CDF}
+Los coeficientes de frontera quedan:
+\begin{equation}
+\begin{aligned}
+\bar{\beta}_{i}^{y {\text{\tiny{min}}}} &= \beta_{i}^{y {\text{\tiny{min}}}} / \left( \alpha_{i}^{y {\text{\tiny{min}}}} \: h_{y}  + \beta_{i}^{y{\mbox{\tiny{min}}}} \right), \\
+\bar{\beta}_{i}^{y {\text{\tiny{max}}}} &= \beta_{i}^{y {\text{\tiny{max}}}} / \left( \alpha_{i}^{y {\text{\tiny{max}}}} \: h_{y}  + \beta_{i}^{y{\mbox{\tiny{max}}}} \right), \\
+\bar{\beta}_{j}^{x {\text{\tiny{min}}}} &= \beta_{x}^{x {\text{\tiny{min}}}} / \left( \alpha_{j}^{x {\text{\tiny{min}}}} \: h_{x}  + \beta_{j}^{x {\mbox{\tiny{min}}}} \right), \\
+\bar{\beta}_{j}^{x {\text{\tiny{max}}}} &= \beta_{j}^{x {\text{\tiny{max}}}} / \left( \alpha_{j}^{x {\text{\tiny{max}}}} \: h_{x}  + \beta_{j}^{x {\mbox{\tiny{max}}}} \right)
+\end{aligned}
+\label{eq:ecuacion_13_08a}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Simplificación de las CDF}
+Los coeficientes de frontera quedan:
+\begin{equation}
+\begin{aligned}
+\bar{\gamma}_{i}^{y {\text{\tiny{min}}}} &= \gamma_{i}^{y {\text{\tiny{min}}}} / \left( \alpha_{i}^{y {\text{\tiny{min}}}} + \beta_{i}^{y{\text{\tiny{min}}}} / h_{y} \right), \\
+\bar{\gamma}_{i}^{y {\text{\tiny{max}}}} &= \gamma_{i}^{y {\text{\tiny{max}}}} / \left( \alpha_{i}^{y {\text{\tiny{max}}}} + \beta_{i}^{y{\text{\tiny{max}}}} / h_{y} \right), \\
+\bar{\gamma}_{j}^{x {\text{\tiny{min}}}} &= \gamma_{j}^{x {\text{\tiny{min}}}} / \left( \alpha_{j}^{x {\text{\tiny{min}}}} + \beta_{j}^{x {\text{\tiny{min}}}} / h_{x} \right), \\
+\bar{\gamma}_{j}^{x {\text{\tiny{max}}}} &= \gamma_{j}^{x {\text{\tiny{max}}}} / \left( \alpha_{j}^{x {\text{\tiny{max}}}} + \beta_{j}^{x {\text{\tiny{max}}}} / h_{x} \right)
+\end{aligned}
+\label{eq:ecuacion_13_08b}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Sistema completo discretizado}
+Con esto, el sistema lineal completo resultante de la discretización de la ecuación de Poisson y las condiciones de frontera mixtas adjuntas toma la siguiente forma:
+\end{frame}
+\begin{frame}
+\frametitle{Sistema completo 1/3}
+Para la frontera inferior
+\begin{equation}
+u_{i, 1} - \bar{\beta}_{i}^{y {\text{\tiny{min}}}} \: u_{i, 2} = \bar{\gamma}_{i}^{y {\text{\tiny{min}}}}, \hspace{0.5cm} i = 1, \ldots, N_{x}, \hspace{0.3cm} j = 1
+\label{eq:ecuacion_13_09}
+\end{equation}
+\pause
+Para la frontera izquierda
+\begin{equation}
+u_{i, j} - \bar{\beta}_{i}^{y {\text{\tiny{min}}}} \: u_{2, j} = \bar{\gamma}_{i}^{y {\text{\tiny{min}}}}, \hspace{0.5cm} i = 1, \hspace{0.3cm} j = 2, \ldots, N_{y} - 1
+\label{eq:ecuacion_13_10}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Sistema completo 2/3}
+Para los puntos interiores
+\begin{equation}
+\begin{aligned}
+k_{y} \: u_{i, j-1} &+ k_{x} \: u_{i-1, j} - k_{xy} \: u_{i, j} + k_{x} \: u_{i+1, j} + \\
+&+ k_{y} \: u_{i, j+1} =  f_{i,j} \\
+i &= 2, \ldots, N_{x} - 1, \hspace{1cm} j = 2, \ldots, N_{y} - 1 \hspace{2cm}
+\end{aligned}
+\label{eq:ecuacion_13_11}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Sistema completo 3/3}
+Para la frontera derecha
+\begin{equation}
+- \bar{\beta}_{j}^{x {\text{\tiny{max}}}} \:  u^{}_{N_{x-1}, j} + u^{}_{N_{x},j}  =  \bar{\gamma}_{j}^{x {\text{\tiny{max}}}} \hspace{0.5cm} i = N_{x}, \hspace{0.3cm} j = 2, \ldots, N_{y} - 1
+\label{eq:ecuacion_13_12}
+\end{equation}
+\pause
+Para la frontera superior
+\begin{equation}
+- \bar{\beta}_{j}^{y {\text{\tiny{max}}}} \:  u^{}_{i, N_{y-1}} + u^{}_{i, N_{y}}  =  \bar{\gamma}_{i}^{y {\text{\tiny{max}}}} \hspace{0.5cm} i = 1, \ldots, N_{x}, \hspace{0.3cm} j = N_{y}
+\label{eq:ecuacion_13_13}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Re-escribiendo el sistema}
+El sistema discretizado completo se puede re-escribir de una forma general, lo que ayuda a revelar su estructura:
+\begin{equation}
+\begin{aligned}
+a_{i}^{j} \: u_{i, j-1} &+ b_{ai}^{j} \: u_{i-1, j} + b_{bi}^{j} \: u_{i, j} + \\
+&+ b_{ci}^{j} \: u_{i+1, j} + c_{i}^{j} \: u_{i, j+1} = d_{i}^{j} \\
+&i = 1, \ldots, N_{x}, \hspace{0.5cm} j = 1, \ldots, N_{y}
+\end{aligned}
+\label{eq:ecuacion_13_14}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Re-escribiendo el sistema}
+Teniendo en cuenta que la ecuación discretizada centrada alrededor del nodo malla $(i, j)$ no solo conecta los cinco valores vecinos $(u_{i, j-1}, u_{i-1, j}, u_{i,j}, u_{i+1, j}, u_{i, j+1})$, sino todos los valores en los tres renglones contiguos $j-1, j, j+1$.
+\end{frame}
+\begin{frame}
+\frametitle{Re-escribiendo el sistema}
+ El sistema puede expresarse como
+\begin{equation}
+\begin{aligned}
+\sum_{i^{\prime} = 1}^{N_{x}} &\left[ A_{ii^{\prime}}^{j} \: u_{i^{\prime}, j-1} + B_{ii^{\prime}}^{j} \: u_{i^{\prime}, j} + C_{ii^{\prime}}^{j} \: u_{i^{\prime}, j+1}  \right] = d_{i}^{j} \\
+&i = 1, \ldots, N_{x} \hspace{0.5cm} j = 1, \ldots, N_{y}
+\end{aligned}
+\label{eq:ecuacion_13_15}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Re-escribiendo el sistema}
+Donde los bloques $N_{x} \times N_{x}$ de
+\begin{align*}
+\mathbf{A}^{j} &= [A_{ii^{\prime}}^{j}]_{N_{x} N_{x}} \\
+\mathbf{B}^{j} &= [B_{ii^{\prime}}^{j}]_{N_{x} N_{x}} \\
+\mathbf{C}^{j} &= [C_{ii^{\prime}}^{j}]_{N_{x} N_{x}} \\
+\end{align*}   
+tienen los siguientes elementos:
+\end{frame}
+\begin{frame}
+\frametitle{Re-escribiendo el sistema}
+\begin{equation}
+\begin{aligned}
+A_{ii^{\prime}}^{j} &= a_{i}^{j} \: \delta_{ii^{\prime}} \\
+B_{ii^{\prime}}^{j} &= \begin{cases}
+b_{ai}^{j} & \mbox{ si } i^{\prime} = i-1 \\
+b_{bi}^{j} & \mbox{ si } i^{\prime} = i \\
+b_{ci}^{j} & \mbox{ si } i^{\prime} = i+1 \\
+0 & \mbox{ si } i^{\prime} \neq i, i \pm 1 \end{cases} \\
+C_{ii^{\prime}}^{j} &= c_{i}^{j} \: \delta_{ii^{\prime}}
+\end{aligned}
+\label{eq:ecuacion:13_16}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Sistema matricial en banda}
+Usando estos bloques, del sistema matricial completo se puede ver que forma un bloque trigiadonal y su estructura en banda es la siguiente:
+\end{frame}
+{\setbeamercolor{background canvas}{bg=white}
+\begin{frame}
+\frametitle{Sistema tridiagonal y en banda}
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.27]{Imagenes/Sistema_Matricial_Completo.png}
+\end{figure}    
+\end{frame}
+}
+\begin{frame}
+\frametitle{Ajustado el sistema discretizado}
+Al definir los vectores $\mathbf{u}^{j} = [u_{i^{\prime}, j}]_{N_{x}}$ y $\mathbf{d}^{j} = [d_{i}^{j}]_{N_{x}}$, con $\mathbf{u}^{j}$ teniendo como componentes los valores de solución $N_{x}$ en la fila $j$ y $\mathbf{d}^{j}$ que contienen los términos correspondientes del lado derecho, el sistema discretizado toma la forma:
+\begin{equation}
+\mathbf{A}^{j} \: \mathbf{u}^{j-1} + \mathbf{B}^{j} \: \mathbf{u}^{j+1} +  \mathbf{C}^{j} \: \mathbf{u}^{j+1} = \mathbf{d}^{j}, \hspace{0.5cm} j = 1, 2, \ldots, N_{y}
+\label{eq:ecuacion_13_17}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Ajustando el sistema discretizado}
+Vemos un conjunto de ecuaciones matriciales conectando los vectores $\mathbf{u}^{j-1}$, $\mathbf{u}^{j}$ y $\mathbf{u}^{j+1}$, que son, las soluciones de los renglones $j-1$, $j$ y $j+1$, respectivamente.
+\end{frame}
+\begin{frame}
+\frametitle{Ajustando el sistema discretizado}
+En notación matricial, la estructura en bloques tridiagonal puede leerse como:
+\pause
+\fontsize{12}{12}\selectfont
+\begin{equation}
+\begin{bmatrix}
+\mathbf{B^{1}} & \mathbf{C^{1}} & & & \\
+\mathbf{A^{2}} & \mathbf{B^{2}} & \mathbf{C^{2}} & & \\
+ & \ddots & \ddots & \ddots & \\
+ & & \mathbf{A^{N_{y}}-1} & \mathbf{B^{N_{y}}-1} & \mathbf{C^{N_{y}}-1}& \\
+ & & & \mathbf{A}^{N_{y}} & \mathbf{B}^{N_{y}} 
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf{u}^{1} \\
+\mathbf{u}^{2} \\
+\vdots \\
+\mathbf{u}^{N_{y} - 1} \\
+\mathbf{u}^{N_{y}}
+\end{bmatrix} = 
+\begin{bmatrix}
+\mathbf{d}^{1} \\
+\mathbf{d}^{2} \\
+\vdots \\
+\mathbf{d}^{N_{y} - 1} \\
+\mathbf{d}^{N_{y}}
+\end{bmatrix}
+\label{eq:ecuacion_13_18}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Solución del sistema completo}
+El sistema (\ref{eq:ecuacion_13_18}) puede resolverse, en principio, usando los dos tipos de métodos que consideran la estructura escasa de la matriz:
+\setbeamercolor{item projected}{bg=red!70!black,fg=white}
+\setbeamertemplate{enumerate items}[circle]
+\begin{enumerate}[<+->]
+\item \emph{Métodos directos: } que utilizan la inversión recursiva de los bloques que componen a la matriz.
+\item \emph{Métodos indirectos: } como el de Jacobi o Gauss-Seidel y de sobrerrelajación.
+\end{enumerate}
+\end{frame}
+\begin{frame}
+\frametitle{Estrategia de solución}
+Debido a la implementación menos elaborada y al escalamiento más favorable de los cálculos con el tamaño del sistema, para problemas con más de dos dimensiones o con límites de dominio complejos, los métodos iterativos resultan ser preferibles para resolver el sistema lineal obtenido al discretizar la EDP con CDF.
+\end{frame}
+\begin{frame}
+\frametitle{Estrategia de solución}
+Por lo tanto, limitamos la siguiente discusión al método iterativo de \emph{Gauss-Seidel}, que muestra en la práctica un espectro más amplio de aplicaciones, que también es adecuado para resolver problemas de valores propios para EDP.
+\end{frame}
+\begin{frame}
+\frametitle{Solución}
+Podemos re-escribir el sistema con la siguiente forma general
+\begin{equation}
+\mathbf{A \cdot u} =  \mathbf{d}
+\label{eq:ecuacion_13_19} 
+\end{equation}
+\pause
+Y considerar la descomposición:
+\begin{equation}
+\mathbf{A} = \mathbf{L} + \mathbf{D} + \mathbf{U}
+\label{eq:ecuacion_13_20}
+\end{equation}
+donde: $\mathbf{L}$ es una matriz triangular inferior, $\mathbf{D}$ es una matriz diagonal, $\mathbf{U}$ es una matriz triangular superior.
+\end{frame}
+\begin{frame}
+\frametitle{solución}
+En el \emph{Método de Jacobi}, los elementos de la diagonal se expresan y la solución se itera de acuerdo a la relación:
+\begin{align*}
+\mathbf{D} \cdot \mathbf{u}^{(r)} = \mathbf{d} - (\mathbf{L} + \mathbf{U}) \cdot \mathbf{u}^{(r-1)}
+\end{align*}
+o equivalentemente
+\begin{equation}
+\mathbf{u}^{(r)} = \mathbf{D}^{-1} \cdot \left[ \mathbf{d} - (\mathbf{L} + \mathbf{U}) \cdot \mathbf{u}^{(r-1)} \right]
+\label{eq:ecuacion_13_21}
+\end{equation}
+donde $r = 1, 2, \ldots$ es el orden de la aproximación a la solución.
+\end{frame}
+\begin{frame}
+\frametitle{Solución}
+Como $\mathbf{D}$ es diagonal, la inversa $\mathbf{D}^{-1}$ también es diagonal y contiene simplemente las inversas de los elementos diagonales de $\mathbf{D}$.
+\\
+\bigskip
+El método de Jacobi converge para las matrices que son diagonalmente dominantes y esta condición generalmente se satisface en el marco de las metodologías de diferencias finitas.
+\end{frame}
+\begin{frame}
+\frametitle{Solución}
+Refiriéndose específicamente a la ecuación (\ref{eq:ecuacion_13_11} para los puntos de malla interior de los sistemas discretizados (\ref{eq:ecuacion_13_09}) - (\ref{eq:ecuacion_13_13}), los componentes de solución diagonal son los que están situados en el centro de los esquemas de discretización tipo estrella, es decir, $u_{i,j}$.
+\end{frame}
+\begin{frame}
+\frametitle{Solución}
+Correspondientemente, la solución se itera en función de la relación de recurrencia:
+\begin{align}
+\begin{aligned}
+u_{i,j}^{(r)} &= \left[ k_{x} \: \left( u_{i-1,j}^{(r-1)} + u_{i+1, j}^{(r-1)} \right) + \right. \\
+&+ \left. k_{y} \: \left( u_{i,j-1}^{(r-1)} + u_{i, j+1}^{(r-1)} \right) - f_{i,j} \right] / k_{xy}
+\end{aligned}
+\label{eq:ecuacion_13_22} 	
+\end{align}
+\pause
+Está definiendo para el método de Jacobi, que todos los valores de solución empleados en el lado derecho provienen de la iteración anterior: $(r - 1)$.
+\end{frame}
+\begin{frame}
+\frametitle{Solución}
+Suponiendo que el algoritmo se ejecuta dentro de los bucles anidados, en orden creciente de los índices $i$ y $j$ al calcular $u_{i,j}^{(r)}$, los componentes actualizados de $u_{i, j-1}^{(r)}$ y $u_{i-1, j}^{(r)}$ ya están disponibles.
+\end{frame}
+\begin{frame}
+\frametitle{Solución}
+Su uso inmediato es específico en el método de Gauss-Seidel y la correspondiente relación de recurrencia formal toma la forma:
+\begin{align}
+\begin{aligned}
+u_{i,j}^{(r)} &= \left[ k_{x} \: \left( u_{i-1,j}^{(r)} + u_{i+1, j}^{(r-1)} \right) + \right. \\
+&+ \left. k_{y} \: \left( u_{i,j-1}^{(r)} + u_{i, j+1}^{(r-1)} \right) - f_{i,j} \right] / k_{xy}
+\end{aligned}
+\label{eq:ecuacion_13_23} 	
+\end{align}
+\end{frame}
+\begin{frame}
+\frametitle{Solución}
+Por lo tanto, a diferencia del método de Jacobi, $u_{i,j}^{(r)}$ es calculado usando los más recientes componentes de $u_{i,j-1}^{(r)}$ y $u_{i-1, j}^{(r)}$, y no de sus predecesores $u_{i,j-1}^{(r-1)}$ y $u_{i-1, j}^{(r-1)}$.
+\end{frame}
+\begin{frame}
+\frametitle{Solución}
+Además de la velocidad de convergencia mejorada, el método de Gauss-Seidel también requiere una sola matriz (no dos) para almacenar la solución.
+\\
+\bigskip
+Este arreglo puede contener al mismo tiempo componentes de ambas aproximaciones $\mathbf{u}^{(r-1)}$ y $\mathbf{u}^{(r)}$, que se actualizan continuamente y se pueden utilizar inmediatamente después de su cálculo.
+\end{frame}
+\begin{frame}
+\frametitle{Ecuaciones obtenidas con Gauss-Seidel}
+Las ecuaciones que describen la solución iterativa del sistema discretizado (\ref{eq:ecuacion_13_09}) -  (\ref{eq:ecuacion_13_13}) con condiciones de frontera mixtas, basadas en el método de Gauss-Seidel, ahora se pueden compilar de la siguiente manera:
+\end{frame}
+\begin{frame}
+\frametitle{Ecuaciones obtenidas con Gauss-Seidel 1/3}
+Para la frontera inferior
+\begin{equation}
+u_{i, 1}^{(r)} = \bar{\beta}_{i}^{y {\text{\tiny{min}}}} \: u_{1,2}^{(r-1)} + \bar{\gamma}_{i}^{y {\text{\tiny{min}}}}, \hspace{0.5cm} i = 1, \ldots, N_{x}, \hspace{0.3cm} j = 1
+\label{eq:ecuacion_13_24}
+\end{equation}
+\pause
+Para la frontera izquierda
+\begin{equation}
+u_{i, j}^{(r)} = \bar{\beta}_{i}^{x {\text{\tiny{min}}}} \: u_{2, j}^{(r-1)} + \bar{\gamma}_{j}^{x {\text{\tiny{min}}}}, \hspace{0.5cm} i = 1, \hspace{0.3cm} j = 2, \ldots, N_{y} - 1
+\label{eq:ecuacion_13_25}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Ecuaciones obtenidas con Gauss-Seidel 2/3}
+Para los puntos interiores
+\begin{equation}
+\begin{aligned}
+u_{i,j}^{(r)} &= \left[ k_{x} \left( u_{i, j-1}^{(r)} u_{i+1, j}^{(r-1)} \right) + \right. \\
+&+ \left. k_{y} \left( u_{i, j-1}^{(r)} + u_{i, j+1}^{(r-1)} \right) - f_{i,j} \right] / k_{xy} \\
+i &= 2, \ldots, N_{x} - 1, \hspace{1cm} j = 2, \ldots, N_{y} - 1 \hspace{2cm}
+\end{aligned}
+\label{eq:ecuacion_13_26}
+\end{equation}    
+\end{frame}
+\begin{frame}
+\frametitle{Ecuaciones obtenidas con Gauss-Seidel 3/3}
+\frametitle{Sistema completo 3/3}
+Para la frontera derecha
+\begin{equation}
+u_{N_{x},j}^{(r)} = \bar{\beta}_{j}^{x {\text{\tiny{max}}}} \:  u_{N_{x-1}, j}^{(r-1)} + \bar{\gamma}_{j}^{x {\text{\tiny{max}}}} \hspace{0.5cm} i = N_{x}, \hspace{0.3cm} j = 2, \ldots, N_{y} - 1
+\label{eq:ecuacion_13_27}
+\end{equation}
+\pause
+Para la frontera superior
+\begin{equation}
+u_{i, N_{y}}^{(r)} = \bar{\beta}_{j}^{y {\text{\tiny{max}}}} \:  u_{N_{x-1}, j}^{(r-1)} + \bar{\gamma}_{i}^{y {\text{\tiny{max}}}} \hspace{0.5cm} i = 1, \ldots, N_{x}, \hspace{0.3cm} j = N_{y}
+\label{eq:ecuacion_13_28}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Punto de paro}
+El proceso recursivo (\ref{eq:ecuacion_13_24}) - (\ref{eq:ecuacion_13_28}) continua, en principio, hasta que la \emph{diferencia máxima relativa} entre los componentes de la solución de dos iteraciones consecutivas son menores a una tolerencia definida $\varepsilon$:     
+\begin{equation}
+\max_{i,j} \vert 1 - u_{ij}^{(r-1)} / u_{ij}^{(r)} \vert \leq \varepsilon
+\label{eq:ecuacion_13_29}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Punto de paro}
+Para los componentes que se anulan, este criterio de convergencia debería emplear la diferencia \emph{absoluta} máxima:
+\[ \max_{i,j} \vert u_{ij}^{(r)} / u_{ij}^{(r-1)} \vert \]
+\end{frame}
+\section{Problema de potencial eléctrico}
+\frame{\tableofcontents[currentsection, hideothersubsections]}
+\subsection{EDP Elíptica: la ecuación de Laplace}
+\begin{frame}
+\frametitle{Problema de potencial eléctrico}
+Nuestro problema es: a partir de una configuración inicial, debemos de calcular el potencial eléctrico para todos los puntos que están dentro de una malla cuadrada.
+\end{frame}
+\begin{frame}
+\frametitle{Problema de potencial eléctrico}
+La parte inferior y las orillas de la región están unidos y conectados a \enquote{tierra}, mientras que en la parte superior tenemos un cable conectado a una fuente de voltaje de 100 Volts.
+\begin{figure}
+	\centering
+	\includestandalone{mallaSolucionEDP_02}
+\end{figure}
+\end{frame}
+\begin{frame}
+\frametitle{EDP Elíptica, la ecuación de Laplace}
+Consideremos que tenemos un cuadrado completo para nuestro problema, de tal manera que los bordes son aislantes y cierran el cuadro.
+\end{frame}
+\begin{frame}
+\frametitle{EDP Elíptica, la ecuación de Laplace}
+Dado que conocemos los valores de potencial, tenemos un problema con condiciones de Neumann en la frontera, por lo que la solución es única y estable.
+\end{frame}
+\begin{frame}
+\frametitle{EDP Elíptica, la ecuación de Laplace}
+Sabemos de la teoría electrodinámica que el potencial eléctrico $U(x)$ alrededor de una carga estática, satisface la ecuación de Poisson:
+\[ \nabla^{2} U(x) = - 4 \pi \rho(x) \]
+donde $\rho(x)$ es la densidad de carga.
+\end{frame}
+\begin{frame}
+\frametitle{EDP Elíptica, la ecuación de Laplace}
+En las regiones espaciales sin carga, es decir $\rho(x)=0$, el potencial satisface la ecuación de Laplace:
+\[ \nabla^{2} U(x) = 0\]
+\end{frame}
+\begin{frame}
+\frametitle{EDP Elíptica, la ecuación de Laplace}
+Resolviendo las ecuaciones en 2-D en coordenadas rectangulares:
+\[ \dfrac{\partial^{2} U(x,y)}{\partial x^{2}} + \dfrac{\partial^{2} U(x,y)}{\partial y^{2}}  = \left\lbrace \begin{array}{l}
+0 \\
+- 4\pi \rho(x)
+\end{array} \right. \]
+\end{frame}
+\begin{frame}
+\frametitle{Solución del problema}
+Para resolver nuestra ecuación 2-D numéricamente, dividimos el espacio en una malla y buscamos la solución para $U$ en cada una de ellas.
+\end{frame}
+\begin{frame}
+\frametitle{Solución del problema}
+Como expresaremos derivadas en términos de diferencias finitas de los valores de $U$ para cada elemento de la malla, este es el método de diferencias finitas.
+\\
+\bigskip
+Un método más eficiente pero a la vez más complicado es la técnica del elemento finito que resuelve la EDP para pequeños elementos geométricos.
+\end{frame}
+\begin{frame}
+\frametitle{División de la región de trabajo}
+El algoritmo para la ecuación de Laplace: el potencial en un punto $(x,y) = (i,j)$ $\Delta$ es igual al promedio de los valores de potencial de los cuatro puntos vecinos, los nodos con los centros en blanco, corresponden a los valores de potencial constante sobre la frontera.
+\end{frame}
+{\setbeamercolor{background canvas}{bg=white}
+\begin{frame}[plain]
+\begin{figure}
+	\centering
+	\includestandalone{mallaSolucionEDP_03}
+\end{figure}
+\end{frame}
+}
+\begin{frame}
+\frametitle{Solución del problema}
+Usaremos el algoritmo de diferenciación hacia adelante. Sumamos las dos series de Taylor para el potencial: a la derecha e izquierda de $(x,y)$ así como para arriba y abajo de $(x,y)$:
+\fontsize{12}{12}\selectfont
+\begin{align*}
+U(x + \Delta x,y) &= U(x, y) + \dfrac{\partial U}{\partial x} \: \Delta x + \dfrac{1}{2} \dfrac{\partial^{2} U}{\partial x^{2}} \: (\Delta x)^{2} + \ldots \\
+U(x - \Delta x,y) &= U(x,y) - \dfrac{\partial U}{\partial x} \: \Delta x + \dfrac{1}{2} \dfrac{\partial^{2} U}{\partial x^{2}} \: (\Delta x)^{2} - \ldots \\
+\end{align*}
+\end{frame}
+\begin{frame}
+\frametitle{Solución del problema}
+Todos los términos impares se cancelan, al sumar las ecuaciones obtendremos una aproximación por diferencias centrales para las segunda derivada parcial:
+\fontsize{12}{12}\selectfont
+\begin{align*}
+\dfrac{\partial^{2} U(x,y)}{\partial x^{2}} &\simeq \dfrac{U(x+\Delta x, y) + U(x-\Delta x,y)-2 \: U(x,y)}{(\Delta x)^{2}} \\
+\dfrac{\partial^{2} U(x,y)}{\partial y^{2}} &\simeq \dfrac{U(x, y+\Delta y) + U(x,y-\Delta y)-2 \: U(x,y)}{(\Delta y)^{2}}
+\end{align*}
+\end{frame}
+\begin{frame}
+\frametitle{Solución del problema}
+Al sustituir las dos ecuaciones en la ecuación de Laplace, obtenemos una expresión en diferencias finitas para la EDP:
+\fontsize{12}{12}\selectfont
+\begin{align*}
+\dfrac{U(x+\Delta x,y) + U(x-\Delta x, y) - 2 \: U(x,y)}{(\Delta x^{2})} + {} \\
+{} + \dfrac{U(x,y+\Delta y) + U(x,y-\Delta y) - 2 \: U(x,y)}{(\Delta y)^{2}} \simeq 0
+\end{align*}
+\end{frame}
+\begin{frame}
+\frametitle{Solución del problema}
+Asumimos que los puntos en la malla $(x,y)$ tienen el mismo espaciamiento $\Delta x =  \Delta y = \Delta$, por el que el algoritmo toma la sencilla forma:
+\begin{align*}
+U(x + \Delta, y) + U(x-\Delta, y) + {} \\
+U(x,y +\Delta)  + U(x,y - \Delta) - 4 \: U(x,y)= 0
+\end{align*}
+\end{frame}
+\begin{frame}
+\frametitle{Solución del problema}
+La ecuación muestra una relación entre las soluciones en los cinco puntos.
+\\
+\bigskip
+Cuando $U(x,y)$ se evalúa para $N_{x}$ valores en la malla y para $N_{y}$ valores, obtenemos un conjunto de $N_{x} \times N_{y}$ ecuaciones algebraicas lineales.
+\end{frame}
+\begin{frame}
+Hacemos una aproximación para $U(x,y)$
+\begin{eqnarray*}
+U(x,y) \simeq	\dfrac{1}{4} \left[ U(x+\Delta ,y) + U(x-\Delta,y) + \right. \\
+\left. + U(x,y+\Delta) + U(x,y-\Delta) \right]
+\end{eqnarray*}
+En términos de posiciones discretas de la malla, las variables $x$, $y$ son:
+\[ x = x_{0} + i \Delta, \hspace{1cm} y = y_{0}+ j \Delta, \hspace{0.8cm} i,j = 0,1,\ldots,N_{max-1} \]
+\end{frame}
+\begin{frame}
+\frametitle{Solución del problema}
+El algoritmo de diferencias finitas resulta ser:
+\[ U_{i,j} = \dfrac{1}{4} [U_{i+1,j} + U_{i-1,j} + U_{i,j+1} + U_{i,j-1}] \]
+\begin{figure}
+	\centering
+	\includestandalone{mallaSolucionEDP_04}
+\end{figure}
+\end{frame}
+\subsection{Solución con \python}
+\begin{frame}
+\frametitle{Implementando el código}
+El código tiene cuatro secciones:
+\setbeamercolor{item projected}{bg=red!70!black,fg=white}
+\setbeamertemplate{enumerate items}[circle]
+\begin{enumerate}[<+->]
+\item Inicializar todos los puntos de la malla en un potencial de 0 V.
+\item Asignar el valor de 100 V a uno de los extremos que corresponden al problema, éste valor debe de permanecer \textbf{constante} durante todo el proceso del algoritmo.
+\item El algoritmo se aplica a todos los puntos de la malla (la línea equipotencial de 100 V se mantiene constante)
+\item Se grafican los datos con la librería de \funcionazul{matplotlib}.
+\end{enumerate}
+\end{frame}
+{\setbeamercolor{background canvas}{bg=white}
+\begin{frame}[fragile]
+\frametitle{0. Llamada a las librerías}
+\begin{lstlisting}[caption=Llamando a las librerías que se utilizarán, style=FormattedNumber, basicstyle=\linespread{1.1}\ttfamily=\small, columns=fullflexible]
+import numpy as np
+
+import matplotlib.pylab as plt
+
+from mpl_\textunderscore_toolkits.mplot3d import Axes_3_D
+
+from matplotlib import cm
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{1. Iniciar la malla}
+Se requiere preparar un espacio de trabajo, en este caso, una malla cuadrada de $100$ puntos. Para ello, la construimos mediante un arreglo:
+\\
+\bigskip
+\begin{lstlisting}[caption=Construyendo la malla, style=FormattedNumber, basicstyle=\linespread{1.1}\ttfamily=\small, columns=fullflexible]
+Nmax = 100
+
+Niter = 70
+
+V = np.zeros((Nmax, Nmax), float)
+\end{lstlisting}
+\end{frame}
+% \begin{frame}[fragile]
+% \frametitle{Asignación de valores iniciales en la malla}
+% Sin importar la posición de los puntos, les asignamos el valor de cero a todos.
+% \begin{lstlisting}[basicstyle=\linespread{0.9}\ttfamily\small, columns=fullflexible]
+% for i in range(100):
+%     for j in range(100):
+%         p[i][j] = 0.0
+% \end{lstlisting}
+% \end{frame}
+\begin{frame}[fragile]
+\frametitle{2. Asignación de valores en la frontera}
+Corresponde ahora, asignar los valores de la frontera, para los cuales, $V=100$, así pues:
+\begin{lstlisting}[caption=Asignando los valores iniciales, style=FormattedNumber, basicstyle=\linespread{1.1}\ttfamily=\small, columns=fullflexible]
+for k in range(0, Nmax-1):
+    V[k,_0_] = 100.0
+\end{lstlisting}
+\end{frame}
+% \begin{frame}[fragile]
+% \frametitle{3. Algoritmo de iteración}
+% Una vez determinados los puntos del problema, usamos el siguiente algoritmo de iteración, que se calcula 1000 veces, esto para darle estabilidad a los resultados.
+% \end{frame}
+\begin{frame}[plain, allowframebreaks, fragile]
+\frametitle{3. Algoritmo de iteración}
+\begin{lstlisting}[caption=Iteración en los puntos, style=FormattedNumber, basicstyle=\linespread{1.1}\ttfamily=\small, columns=fullflexible]
+for iter in range(Niter):
+    if iter%10 == 0: print(iter)
+    for i in range(1, Nmax-2):
+        for j in range(1, Nmax-2):
+            V[i,j] = 0.25 * (V[i+_1_,j] + V[i-_1_,j] + V[i,j+_1_] + V[i,j-_1_])
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{4. Graficando los datos obtenidos}
+Con el siguiente llamado a librerías gráficas, lo que buscamos es preparar una superficie para representar los datos y ocupar adicionalmente, una barra lateral que nos indica un gradiente tanto de color como de valores, junto con curvas de nivel de los equipotenciales.
+\end{frame}
+\begin{frame}[plain, allowframebreaks, fragile]
+\frametitle{4. Graficando los datos obtenidos}
+\begin{lstlisting}[caption=Graficando la solución, style=FormattedNumber, basicstyle=\linespread{1.1}\ttfamily=\small, columns=fullflexible]
+x = range(0, Nmax-_1_, 2); y = range(0, 50, 2)
+
+X, Y = plt.meshgrid(x, y)
+
+def functz(V):
+    z = V[X, Y]
+    return z
+
+Z = functz(V)
+
+fig = plt.figure()
+
+ax = Axes_3_D(fig)
+surf = ax.plot_\textunderscore_surface(X, Y, Z, rstride=2, cstride=2, linewidth=0.5, cmap=cm.coolwarm)
+surf.set_\textunderscore_clim([np.min(Z), np.max(Z)])
+
+ax.set_\textunderscore_zlabel('V')
+ax.set_\textunderscore_xlabel('x')
+ax.set_\textunderscore_ylabel('y')
+
+#Para la barra lateral
+cbar = fig.colorbar(surf, shrink=0.5, aspect=10)
+cbar.ax.set_\textunderscore_ylabel('Potencial electrico', rotation=270)
+cset = ax.contourf(X,Y,Z, zdir='z', offset=-50, cmap=cm.coolwarm)
+
+ax.set_\textunderscore_zlim(-50, 100)
+
+plt.show()
+\end{lstlisting}
+\end{frame}
+}
+\begin{frame}
+\frametitle{4. Graficando los datos obtenidos}
+Nótese que aunque importamos matplotlib, es necesario utilizar la librería \funcionazul{cm} que nos ofrece un mapa de colores.
+\\
+\medskip
+Llamamos con la variable \funcionazul{fig} para referirnos posteriormente en el código al espacio de trabajo con la gráfica, la variable \funcionazul{ax}, de igual manera, es una referencia para los elementos en específico del objeto en tres dimensiones.
+\end{frame}
+{\setbeamercolor{background canvas}{bg=white}
+\begin{frame}[fragile]
+\frametitle{4. Graficando los datos obtenidos}
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.6]{Solucion_Laplace_01.eps} 
+\end{figure}
+\end{frame}
+}
+\subsection{Ejercicios a cuenta de examen}
+\begin{frame}
+\frametitle{1. Problema a cuenta de examen}
+Ahora haremos un cambio en la geometría y dificultad del problema: vamos a considerar el caso de un condensador de placas paralelas, tal como se muestra en  la siguiente figura.
+\end{frame}
+\captionsetup[figure]{labelfont={color=blue}}
+\begin{frame}
+\frametitle{Geometría para el problema}
+\begin{figure}
+	\centering
+	\includestandalone{Figuras/ejercicio_01_Tarea_Examen}
+	\caption{Los valores de $w$ y de $d$ los estableces antes de proponer la solución, recuerda que cada barra mantiene el voltaje durante las iteraciones.}
+\end{figure}
+\end{frame}
+\begin{frame}
+\frametitle{Consideraciones}
+Tienes que resolver la ecuación para calcular el potencial en cada punto, toma en cuenta lo siguiente:
+\setbeamercolor{item projected}{bg=red!70!black,fg=white}
+\setbeamertemplate{enumerate items}[circle]
+\begin{enumerate}[<+->]
+\item Usa un cuadro de $100 \times 100$ para tener una mejor visualización.
+\item Las líneas con potencial constante, tienen una longitud $w$, tal que $w<L$  (es decir, no van de un extremo al otro)
+\seti
+\end{enumerate}
+\end{frame}
+\begin{frame}
+\frametitle{Consideraciones}
+\setbeamercolor{item projected}{bg=red!70!black,fg=white}
+\setbeamertemplate{enumerate items}[circle]
+\begin{enumerate}[<+->]
+\conti
+\item Hay una separación $d$ que es constante entre las dos líneas de equipotencial.
+\item Una vez con la solución de la EDP, grafica tus resultados.
+\end{enumerate}
+\end{frame}
+{\setbeamercolor{background canvas}{bg=white}
+\begin{frame}[fragile]
+\frametitle{Solución al problema de las placas}
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.45]{Potencial02.eps} 
+\end{figure}
+\end{frame}
+}
+\begin{frame}
+\frametitle{2. Problema a cuenta del examen}
+Resuelve la ecuación de Laplace con el siguiente arreglo donde la placa cuadrada conductora se encuentra a $1$ volt(geométricamente se localiza en el centro de la placa exterior, por lo que deberás de determinar su tamaño) mientras que la placa cuadrada exterior, se encuentra a $0$ volts.
+\end{frame}
+{\setbeamercolor{background canvas}{bg=white}
+\begin{frame}
+\frametitle{2. Problema a cuenta del examen}
+\begin{figure}
+	\centering
+	\includestandalone{Figuras/ejercicio_02_Tarea_Examen}
+	\caption{Las dimensiones de cada cuadrado las determinas nuevamente antes del iniciar la solución.}
+\end{figure}
+\end{frame}
+}
+\begin{frame}
+\frametitle{3. Problema a cuenta del examen}
+Desarrolla un esquema numérico para resolver la ecuación de Poisson
+\[ \nabla^{2} \phi (r,\theta) = - \rho (r, \theta) / \epsilon_{0} \]
+en coordenadas polares. 
+\\
+\bigskip
+Considera que la geometría en la frontera es un anillo circular con potenciales dados, para el radio interno es $\phi(a,\theta)$, y para el radio externo $\phi(b,\theta)$. Prueba tu solución asignando valores de potencial al problema.
+\end{frame}
+%\begin{frame}
+%\frametitle{Tips}
+%La ecuación de Poisson en coordenadas polares resulta ser:
+%\[ \nabla^{2} \phi (r,\theta) = \dfrac{1}{r} \dfrac{\partial}{\partial r} \left( r \dfrac{\partial V}{\partial r} \right) + \dfrac{1}{r^{2}} \dfrac{\partial^{2} V}{\partial \theta^{2}} = - \dfrac{\rho(r,\theta)}{\epsilon_{0}} \]
+%donde $0 \leq r \leq R $ y $0 \leq \theta \leq 2 \pi$
+%\end{frame}
+%\begin{frame}[fragile]
+%\frametitle{Tips adicionales}
+%Para crear una malla en coordenadas polares, nos podemos apoyar de la siguiente manera (\emph{nota: } no es la única manera, por lo que no se confíen en que debe de ser así, les da elementos para que puedan modificar y/o ajustar esta propuesta para las necesidades del problema.
+%\end{frame}
+%\begin{frame}[fragile]
+%\frametitle{Primera parte}
+%\begin{lstlisting}
+%from numpy import *
+%import matplotlib.pylab as pp
+%
+%r_a = 0.50
+%r_b = 1
+%circulos = 6  
+%lineas  = 20
+%origen = (0, 0)
+%
+%for r in linspace(r_a, r_b, circulos):
+%    pp.gca().add_patch(pp.Circle(origen, radius=r, fill=False, color='black'))
+%
+%r_ab = array([r_a, r_b])
+%\end{lstlisting}
+%\end{frame}
+%\begin{frame}[fragile]
+%\frametitle{Segunda parte}
+%\begin{lstlisting}
+%for theta in linspace(0, 2 * pi, lineas):
+%    pp.plot(cos(theta) * r_ab, sin(theta) * r_ab, color='red')
+%
+%pp.axis('scaled')
+%pp.title('Creando una malla en coordenadas polares')
+%pp.show()
+%\end{lstlisting}
+%\end{frame}
+%\begin{frame}[fragile]
+%\frametitle{Gráfica de la malla en coordenadas polares}
+%\begin{figure}
+%\centering
+%\includegraphics[scale=0.5]{Malla_Circular01.eps} 
+%\end{figure}
+%\end{frame}
+%\begin{frame}
+%Usando la malla:
+%\begin{eqnarray*}
+%r_{i} &=& i \Delta R \\
+%\theta &=& j \Delta \theta
+%\end{eqnarray*}
+%Se aproxima la ecuación por
+%\[ \begin{split}
+%\dfrac{1}{r_{i}} \left( r_{i+\frac{1}{2}} \dfrac{V_{i+1,j} - V_{ij}}{\Delta r} - r_{j+\frac{1}{2}} \dfrac{V_{ij}-V_{i-1,j}}{\Delta r} \right) \dfrac{1}{\Delta r} + \\
+%+ \dfrac{1}{r^{2}} \dfrac{V_{i,j+1}-2V_{ij}+V_{i,j-1}}{\Delta \theta^{2}} = - \dfrac{\rho(r,\theta)}{\epsilon_{0}}
+%\end{split} \]
+%\end{frame}
+%\begin{frame}
+%donde $V_{ij}$ y $r_{ij}$ son funciones
+%\[ (r_{i}, \theta_{j}) = (i \Delta r, j \Delta \theta) \]
+%Las funciones son periódicas de $j$ en la malla, con período $j=\dfrac{2 \pi}{\Delta \theta}$  y $V_{ij}$ es independiente de $j$.
+%\end{frame}
+\end{document}

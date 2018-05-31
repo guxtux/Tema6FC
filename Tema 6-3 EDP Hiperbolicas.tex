@@ -1,0 +1,585 @@
+\include{pre_documento}
+\input{../Preambulos/pre_codigo}
+\include{pre_define_footers}
+\normalfont
+\usepackage{ccfonts}% http://ctan.org/pkg/{ccfonts}
+\usepackage[T1]{fontenc}% http://ctan.or/pkg/fontenc
+\renewcommand{\rmdefault}{cmr}% cmr = Computer Modern Roman
+\linespread{1.3}
+\title{Ecuaciones diferenciales parciales}
+\subtitle{Curso de Física Computacional}
+\author{M. en C. Gustavo Contreras Mayén}
+\setbeamercolor{background canvas}{bg=blue!15}
+\setbeamercolor{section in toc}{fg=blue}
+\setbeamercolor{subsection in toc}{fg=blue!85}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{frametitle}{fg=white}
+\captionsetup{font=scriptsize,labelfont=scriptsize}
+\newcommand{\funcionazul}[1]{\textcolor{blue}{\textbf{\texttt{#1}}}}
+\newcommand{\textoazul}[1]{\textcolor{blue}{#1}}
+\usepackage{totcount}
+\regtotcounter{section}
+\usepackage{multido}
+
+\newcommand{\mytableofcontents}[0]{
+\multido{\I=1+1}{\totvalue{section}}{
+  \begin{frame}<beamer>
+  \setcounter{section}{\I}
+  \frametitle{Outline}
+  \tableofcontents[
+    currentsection,
+    sectionstyle=show/show,
+    subsectionstyle=show/show/hide,
+  ]
+  \end{frame}
+}
+\setcounter{section}{0}
+}
+
+\begin{document}
+\maketitle
+\fontsize{14}{14}\selectfont
+\spanishdecimal{.}
+
+\mytableofcontents
+
+%\begin{frame}{Contenido}
+%\tableofcontents[pausesections]
+%\end{frame}
+\section{EDP Hiperbólicas}
+\frame{\tableofcontents[currentsection, hideothersubsections]}
+\subsection{Introducción EDP Hiperbólicas}
+\begin{frame}
+\frametitle{Ecuación de onda}
+El prototipo clásico de la EDP de tipo hiperbólico es la ecuación de onda, que en 1D tiene la expresión
+\begin{equation}
+\dfrac{\partial^{2} u }{\partial t} = c^{2} \: \dfrac{\partial^{2} u}{\partial x^{2}}
+\label{eq:ecuacion_13_122}
+\end{equation}
+donde $c$ es la velocidad de fase de la onda.
+\end{frame}
+\begin{frame}
+\frametitle{Ecuación de onda}
+Aunque la ecuación anterior espacialmente está en 1D, se puede suponer que modela una geometría planar 3D a modo de losa, con dependencia explícita de la coordenada cartesiana transversal a la losa, es decir, $x$, y no depende de las otras dos coordenadas, $y$ y $z$ , a lo largo de los cuales, la extensión del sistema puede considerarse virtualmente infinita.
+\end{frame}
+\begin{frame}
+\frametitle{Ecuación de onda}
+En dicha geometría, una onda plana es una onda de frecuencia constante, cuyos frentes de onda (superficies de fase constante) son planos paralelos infinitos $(y, z)$ de amplitud constante, normal a la dirección de propagación, $x$.
+\end{frame}
+\begin{frame}
+\frametitle{Ecuación de onda}
+Para modelar una situación física concreta, la ecuación de onda necesita completarse con condiciones iniciales y de frontera.
+\end{frame}
+\begin{frame}
+\frametitle{Ecuación de onda}
+Las condiciones iniciales especifican la solución y su derivada de tiempo de primer orden sobre todo el dominio espacial en algún momento inicial $t_{0}$:
+\begin{align}
+u(x, t_{0}) &= u^{0}(x), \hspace{1cm} x \in [-x_{\text{max}}, x_{\text{max}}] \label{eq:ecuacion_13_123} \\
+\dfrac{\partial u}{\partial t} (x, t_{0}) &= v^{0(x)} \label{eq:ecuacion_13_124}
+\end{align}
+\end{frame}
+\begin{frame}
+\frametitle{Condiciones de frontera}
+Por simplicidad nuevamente, consideraremos la CDF de tipo Dirichlet, que implican valores constantes en las fronteras:
+\begin{align}
+u(x_\text{min}, t) &= u_{x_{\text{min}}}^0, \hspace{1cm} t > t_{0} \label{eq:ecuacion_13_125} \\
+u(x_\text{max}, t) &= u_{x_{\text{max}}}^0 \label{eq:ecuacion_13_126}
+\end{align}
+\end{frame}
+\begin{frame}
+\frametitle{Espaciamiento en la malla}
+Se hará la aproximación al problema ecs. (\ref{eq:ecuacion_13_122}) - (\ref{eq:ecuacion_13_126}) mediante el esquema de diferencias finitas, ocupando un espaciamiento regular en la malla:
+\begin{align}
+ x_{i} &= x_{\text{min}} + (i - 1) \: h_{x}, \hspace{1cm} i = 1, 2, \ldots, N_{x} \label{eq:ecuacion_13_127} \\
+ t_{n} &= n \: h_{t}, \hspace{3cm} n = 0, 1, \ldots, \label{eq:ecuacion_13_128}
+ \end{align}
+ donde $h_{t}$ representa el paso temporal, $N_{x}$ es el número de nodos en el eje espacial de la malla.
+\end{frame}
+\begin{frame}
+\frametitle{Tamaño del paso espacial}
+El tamaño del paso espacial está definido por:
+\begin{equation}
+h_{x} = (x_{\text{max}} - x_{\text{min}}) / (N_{x} - 1)
+\label{eq:ecuacion_13_129}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Desarrollo de la segunda derivada}
+Para la segunda derivada con respecto a la posición en el nodo $(x_{i}, t_{n})$, usaremos la fórmula de diferencias centrales para la derivada de segundo orden:
+\begin{align*}
+\left( \dfrac{\partial^{2} u }{\partial x^{2}} \right)_{i,n} = \dfrac{u_{i+1}^{n} -2 \: u_{i}^{n} + u_{i-1}^{n}}{h_{x}^{2}} + O(h_{x}^{2})
+\end{align*}
+donde $u_{i}^{n} \equiv u(x_{i}, t_{n})$
+\end{frame}
+\begin{frame}
+\frametitle{La segunda derivada con respecto a $x$}
+Se requiere sólo la información de los puntos en el paso temporal $t_{n}$ y los puntos vecinos del punto requerido. 
+\end{frame}
+\begin{frame}
+\frametitle{La segunda derivada con respecto a $t$}
+La derivada temporal se aproxima usando una fórmula similar
+\begin{align*}
+\left( \dfrac{\partial^{2} u }{\partial t^{2}} \right)_{i,n} = \dfrac{u_{i}^{n+1} -2 \: u_{i}^{n} + u_{i}^{n-1}}{h_{t}^{2}} + O(h_{t}^{2})
+\end{align*}
+\end{frame}
+\begin{frame}
+\frametitle{La ecuación de onda}
+Aplicando los esquemas anteriores, se tiene una aproximación a la ecuación de onda (\ref{eq:ecuacion_13_122}) para el nodo espacio - temporal $(x_{i}, t_{n})$:
+\begin{equation}
+\dfrac{u_{i}^{n+1} -2 \: u_{i}^{n} + u_{i}^{n-1}}{h_{t}^{2}} =  c^{2} \: \dfrac{u_{i+1}^{n} -2 \: u_{i}^{n} + u_{i-1}^{n}}{h_{x}^{2}}
+\label{eq:ecuacion_13_130}
+\end{equation}
+El error asociado es del orden de $O(h_{x}^{2} + h_{t}^{2})$.
+\end{frame}
+\begin{frame}
+\frametitle{Propagación de la solución}
+Usando la siguiente notación
+\begin{equation}
+\lambda = \left( \dfrac{c \: h_{t}}{h_{x}} \right)^{2}
+\label{eq:ecuacion_13_131}
+\end{equation}
+podemos expresar la solución propagada al tiempo $t_{n+1}$ para los puntos interiores $x_{i}$ de la malla, en términos de los dos pasos temporales anteriores, $t_{n}$ y $t_{n-1}$:
+\end{frame}
+\begin{frame}
+\frametitle{Propagación de la solución}
+\begin{align}
+\begin{aligned}
+u_{i}^{n+1} = \lambda \: u_{i-1}^{n} + 2 \: (1 - \lambda) \: u_{i}^{n} &+ \lambda \: u_{i+1}^{n} - u_{i}^{n-1} \\
+& i = 2, 3, \ldots, N_{x} - 1
+\end{aligned}
+\label{eq:ecuacion_13_132}
+\end{align}
+\end{frame}
+\begin{frame}
+\frametitle{Las CDF}
+En cuanto a las CDF, en virtud de las condiciones de Dirichlet, éstas permanecen constantes durante toda la propagación, y esto se expresa simplemente por 
+\begin{equation}
+u_{1}^{n+1} = u_{1}^{n}, \hspace{1cm} u_{N_{x}}^{n+1} = u_{N_{x}}^{n}
+\label{eq:ecuacion_13_133}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{El sistema matricial}
+En notación matricial, el sistema (\ref{eq:ecuacion_13_132}) - (\ref{eq:ecuacion_13_133}), tiene la forma:
+\begin{equation}
+\mathbf{u}^{n+1} =  \mathbf{B} \cdot \mathbf{u}^{n} - \mathbf{u}^{n-1}, \hspace{1cm} n = 0, 1, 2, \ldots,
+\label{eq:ecuacion_13_134}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{El sistema matricial}
+Donde
+\begin{equation}
+\fontsize{12}{12}\selectfont
+\mathbf{B} = \begin{bmatrix}
+1 & 0 & & & 0 \\
+\lambda & 1 - 2 \lambda & \lambda & & & \\
+ & \ddots & \ddots & \ddots & \\
+ & & \lambda & 1 - 2 \lambda & \lambda \\
+ 0 & & & 0 & 1
+\end{bmatrix},
+\hspace{0.3cm}
+\mathbf{u}^{n} = 
+\begin{bmatrix}
+u_{1}^{n} \\
+u_{2}^{n} \\
+\vdots \\
+u_{N_{x} - 1}^{n} \\
+u_{N_{x}}^{n} 
+\end{bmatrix}
+\label{eq:ecuacion_13_135}
+\end{equation}
+la matriz de propagación $\mathbf{B}$ mantiene una estructura tridiagonal.
+\end{frame}
+\begin{frame}
+\frametitle{Naturaleza explícita del método}
+Dado que los componentes de la solución propagada $\mathbf{u}^{n+1}$ se pueden expresar de forma independiente, se dice que \emph{el método es explícito} y es  similar al método explícito FTCS para la ecuación de difusión.
+\end{frame}
+\begin{frame}
+\frametitle{Consideraciones del método}
+A pesar de la similitud formal, existe, sin embargo, una diferencia no trivial entre los métodos explícitos para EDP parabólicas e hiperbólicas, a saber, la aparición en la segunda solución anterior $\mathbf{u}^{n-1}$, a lo largo de la anterior, $\mathbf{u}^{n}$.
+\end{frame}
+\begin{frame}
+\frametitle{Consideraciones del método}
+Una vez que comenzó la propagación, este aspecto se maneja fácilmente mediante el almacenamiento continuo de las dos soluciones más recientes.
+\\
+\bigskip
+\pause
+Un aspecto un tanto delicado se refiere al inicio de la propagación.
+\end{frame}
+\begin{frame}
+\frametitle{Consideraciones del método}
+De hecho, junto con la solución inicial $u_{0}$, es necesario proporcionar la primera solución propagada, $\mathbf{u}^{1}$, en lugar de la primera derivada $\partial \mathbf{u}^{0} / \partial t$
+\end{frame}
+\begin{frame}
+\frametitle{Consideraciones del método}
+Una forma efectiva de hacerlo, manteniendo la precisión general de segundo orden del método, comienza con la serie Taylor de los componentes de la solución con respecto al tiempo:
+\begin{align*}
+u_{i}^{n+1} = u_{i}^{n} + h_{t} \: \left( \dfrac{\partial u}{\partial t} \right)_{i,n} + \dfrac{1}{2} \: h_{t}^{2} \: \left( \dfrac{\partial^{2} u}{\partial t^{2}} \right)_{i,n} + O(h_{t}^{3})
+\end{align*}
+\end{frame}
+\begin{frame}
+\frametitle{Consideraciones del método}
+En particular, para el primer paso de propagación, se tiene que
+\begin{align*}
+u_{i}^{1} = u_{i}^{0} + h_{t} \: \left( \dfrac{\partial u}{\partial t} \right)_{i,0} + \dfrac{1}{2} \: h_{t}^{2} \: \left( \dfrac{\partial^{2} u}{\partial t^{2}} \right)_{i,0} + O(h_{t}^{3})
+\end{align*}
+\end{frame}
+\begin{frame}
+\frametitle{Consideraciones del método}
+Mientras que la primera derivada está disponible desde la condición inicial (\ref{eq:ecuacion_13_124}), la segunda derivada puede ser reemplazada con la segunda derivada espacial usando la ecuación de onda (\ref{eq:ecuacion_13_122})
+\begin{align*}
+u_{i}^{1} = u_{i}^{0} + h_{t} \: v_{i}^{0} + \dfrac{1}{2} \: h_{t}^{2} \: c^{2} \: \left( \dfrac{\partial^{2} u}{\partial x^{2}} \right)_{i, 0} + O(h_{t}^{3})
+\end{align*}
+donde $v_{i}^{0} = v^{0}(x_{i})$.
+\end{frame}
+\begin{frame}
+\frametitle{Consideraciones para el método}
+Para la segunda deriva espacial, usamos el esquema de segundo orden
+\begin{align*}
+u_{i}^{1} = u_{i}^{0} + h_{t} \: v_{i}^{0} &+ \dfrac{1}{2} \: h_{t}^{2} \: c^{2} \: \dfrac{u_{i+1}^{0} - 2 \: u_{i}^{0} + u_{i-1}^{0}}{h_{x}^{2}} \\
+&+ O(h_{t}^{3} + h_{x}^{2})
+\end{align*}
+\end{frame}
+\begin{frame}
+\frametitle{Parámero de propagación}
+Identificando el parámetro $\lambda$, tendremos la expresión final para los componentes de la primera solución propagada: $\mathbf{u}^{1}$, en términos de la solución inicial $\mathbf{u^{0}}$, y la primera derivada temporal inicial $\mathbf{v}^{0}$:
+\begin{align}
+\begin{aligned}
+u_{i}^{1} = \dfrac{1}{2} \: \lambda \: u_{i-1}^{0} + (1 - \lambda) \: u_{i}^{0} + \dfrac{1}{2} \: \lambda \: u_{i+1}{0} + h_{t} \: v_{i}^{0} \\
+i = 2, 3, \ldots, N_{x} - 1
+\end{aligned}
+\label{eq:ecuacion_13_136}
+\end{align}
+\end{frame}
+\begin{frame}
+\frametitle{Estabilidad del método}
+De acuerdo al método general para el análisis de estabilidad de Von Neumann, sustituimos el modo propio genérico $\varepsilon_{i}^{n} = \xi(k)^{n} \: \exp(\ell \: k \: i \: h_{x})$ (recuerda que $\ell = \sqrt{-1}$, para diferenciar con el índice $i$) como una solución en la ecuación de diferencias (\ref{eq:ecuacion_13_132}), para encontrar:
+\begin{align*}
+\xi = [ \lambda &\: \exp(- \ell \: k \: h_{x}) + \\
+&+  2 \: (1 - \lambda) + \lambda \: \exp(\ell \: k \: h_{x})] \: \xi - \xi^{-1}
+\end{align*}
+\end{frame}
+\begin{frame}
+\frametitle{El parámetro de propagación}
+Combinando las dos exponenciales en términos de $2 \: \lambda \: \cos(k \: h_{x})$ y utilizando la identidad $1 - \cos x =  2 \: \sin^{2}(x/2)$, el factor de amplificación satisface
+\begin{equation}
+\dfrac{1}{2} (\xi + \xi^{-1}) = 1 -  2 \: \lambda \: sin^{2}(k \: h_{x} / 2)
+\label{eq:ecuacion_13_137}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Factor de amplificación}
+Considerando que el lado derecho de la expresión es un real, entonces $\xi + \xi^{-1}$ debe ser real también.
+\\
+\bigskip
+Entonces debe ocurrir que $\vert \xi \vert = \vert \xi \vert^{-1}$, que nos lleva
+\begin{align*}
+\dfrac{1}{2} \left( \xi + \xi^{-1} \right) = \vert \xi \vert \: \cos \varphi
+\end{align*}
+donde $\varphi$ es una fase arbitraria.
+\end{frame}
+\begin{frame}
+\frametitle{Consideración para la estabilidad}
+Tomando en cuenta que la condición de estabilidad $\vert \xi \vert < 1$, la relación anterior impone que el término del lado derecho de la ecuación (\ref{eq:ecuacion_13_137})
+\begin{align*}
+- 1 \leq 1 - 2 \: \lambda \: \sin^{2} (k \: h_{x}/2) \leq 1
+\end{align*}
+\pause
+que se puede satisfacer siempre que
+\begin{equation}
+0 \leq \lambda \leq 1
+\label{eq:ecuacion_13_138}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Condición de estabilidad}
+Como se definió $\lambda$ ec. (\ref{eq:ecuacion_13_131}), entonces la condición de estabilidad para la propagación de la función de onda $u(x, t)$, basado en un esquema explícito de diferencias es
+\begin{equation}
+h_{t} \leq \dfrac{h_{x}}{c}
+\label{eq:ecuacion_13_139}
+\end{equation}
+\end{frame}
+\section{Algoritmo para la ecuación de onda}
+\frame{\tableofcontents[currentsection, hideothersubsections]}
+\subsection{Función \protect\funcionazul{PropagOnda}}
+\begin{frame}
+\frametitle{La función \funcionazul{PropagOnda}}
+La siguiente función \funcionazul{PropagOnda} utiliza el algoritmo (\ref{eq:ecuacion_13_131}) - (\ref{eq:ecuacion_13_133}) para resolver un problema de Cauchy para la ecuación de onda (\ref{eq:ecuacion_13_122}), propagando las dos soluciones iniciales $u_{0}[ \ ]$ y $u_{1}[ \ ]$ en el intervalo $h_{t}.$
+\end{frame}
+\begin{frame}
+\frametitle{Variables que intervienen}
+La velocidad de fase constante $c$, el paso espacial $h_{x}$, el número de nodos espaciales $N_{x}$, se proporcionan a la función mediante los argumentos $c$, $hx$ y $nx$.
+\end{frame}
+\begin{frame}
+\frametitle{Arreglo con la solución}
+La solución propagada se devuelve en el arreglo $u[ \ ]$, y se supone que el ciclo de propagación del programa principal desplazará hacia atrás el contenido de las matrices $u [ \ ]$, $u_{1} [ \ ]$ y $u_{0} [ \ ]$, liberando al arreglo $u [ \ ]$, para un nuevo paso de propagación.
+\end{frame}
+\begin{frame}[fragile, allowframebreaks, plain]
+\frametitle{Función \funcionazul{PropagOnda}}
+\begin{lstlisting}[caption=Función \texttt{PropagOnda} para el ejercicio, style=FormattedNumber, basicstyle=\linespread{1.1}\ttfamily=\small, columns=fullflexible]
+def PropagOnda(u_0_, u_1_, u, nx, c, hx, ht):
+   lam = c*ht/hx
+   lam = lam*lam
+   lam_2_ = 2e0*(1e0 - lam)
+
+   u[_1_] = u_0_[_1_]; u[nx] = u_0_[nx]
+   for i in range(2,nx):
+      u[i] = lam*u_1_[i-_1_] + lam_2_*u_1_[i] + lam*u_1_[i+_1_] - u_0_[i]
+\end{lstlisting}
+\end{frame}
+\subsection{Ejercicio a resolver}
+\begin{frame}
+\frametitle{Ejercicio}
+Utilizaremos el algoritmo propuesto para resolver la clásica ecuación de onda:
+\begin{equation}
+\dfrac{\partial^{2} u }{\partial t^{2}} = c^{2} \: \dfrac{\partial^{2} u}{\partial x^{2}},  \hspace{1cm} t > 0
+\label{eq:ecuacion_13_140}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Paquete de onda inicial}
+Queremos ver cómo evoluciona y se propaga la solución con un paquete de onda inicial centrado en el origen:
+\begin{equation}
+u(x, 0) = \dfrac{\sin x \: \Delta k}{x \: \Delta k}, \hspace{1cm} -x_{\text{max}} \leq x \leq x_{\text{max}}
+\label{eq:ecuacion_13_141}
+\end{equation}
+\end{frame}
+\begin{frame}
+\frametitle{Condiciones iniciales y de frontera}
+La primera derivada parcial de u con respecto al tiempo es $(\partial u/\partial t)(x, 0) = 0$, y la ecuación de onda está sujeta a las CDF de Dirichlet:
+\begin{equation}
+u(\pm x_{\text{max}}, t) = \dfrac{\sin x_{\text{max}} \: \Delta t}{x_{\text{max}} \: \Delta k}, \hspace{1cm} t > 0
+\label{eq:ecuacion_13_142}
+\end{equation}
+donde $\Delta k$ k denota el ancho del intervalo de números de onda que contribuyen al paquete de onda, y cuanto mayor es su valor, menor es el ancho medio del paquete.
+\end{frame}
+\begin{frame}
+\frametitle{Valores necesarios}
+Usaremos los siguientes valores para el ejercicio:
+\setbeamercolor{item projected}{bg=green!70!black,fg=white}
+\setbeamertemplate{enumerate items}[circle]
+\begin{enumerate}[<+->]
+\item $c = 10$
+\item $ \Delta \: k = 1$
+\item $x_{\text{max}} = 100$
+\item $h_{x} = 5 \times 10^{-2}$
+\item $h_{t} = 5 \times 10^{-3}$ a $t_{\text{max}} = 40$
+\end{enumerate}
+\pause
+De tal manera que $\lambda=1$, lo que nos garantiza la estabilidad en la propagación de la solución.
+\end{frame}
+\begin{frame}
+\frametitle{El moduloEcuacionOnda}
+Dentro del módulo \funcionazul{moduloEcuacionOnda} se tienen las siguientes tres funciones:
+\setbeamercolor{item projected}{bg=green!70!black,fg=white}
+\setbeamertemplate{enumerate items}[circle]
+\begin{enumerate}[<+->]
+\item \funcionazul{PropagOnda}.
+\item \funcionazul{Init}.
+\item \funcionazul{generaArchivo}.
+\end{enumerate}
+\end{frame}
+\begin{frame}
+\frametitle{La función \funcionazul{PropagOnda}}
+Ya se presentó la operación de la función que resuelve la propagación de la solución de la ecuación de onda.
+\end{frame}
+\begin{frame}
+\frametitle{La función \funcionazul{Init}}
+Inicializa en la malla espacial la solución inicial 
+\begin{equation}
+u(x, 0) = \dfrac{\sin x \: \Delta k}{x \: \Delta k}, \hspace{1cm} -x_{\text{max}} \leq x \leq x_{\text{max}}
+\end{equation}
+y establece las CDF del problema.
+\end{frame}
+\begin{frame}[plain, allowframebreaks, fragile]
+\frametitle{Código de la función \funcionazul{Init}}
+\begin{lstlisting}[caption=Nombre Codigo, style=FormattedNumber, basicstyle=\linespread{1.1}\ttfamily=\small, columns=fullflexible]
+def Init(u_0_,u_1_,x,nx,c,dk,hx,ht):
+   for i in range(1, nx+1):
+      u_0_[i] = np.sin(dk*x[i])/(dk*x[i]) if dk*x[i] else 1e0
+
+   lam = c*ht/hx
+   lam = lam*lam
+   lam_2_ = 2e0 * (1e0 - lam)
+   u_1_[_1_] = u_0_[_1_]
+   u_1_[nx] = u_0_[nx]
+   for i in range(2,nx):
+      v_0_ = 0e0
+      u_1_[i] = 0.5e0*(lam*u_0_[i-_1_]+lam_2_*u_0_[i]+lam*u_0_[i+_1_])-ht*v_0_
+\end{lstlisting}	
+\end{frame}
+\begin{frame}
+\frametitle{La función \funcionazul{generaArchivo}}
+La información que nos devuelve la propagación de la solución $u(x, t)$ está dentro de las listas $x$ y $u$, considerando $h_{t}$, el tamaño del conjunto solución es de 4000 datos.
+\end{frame}
+\begin{frame}
+\frametitle{La función \funcionazul{generaArchivo}}
+Para manipular esta información en una gráfica, nos conviene almacenar el contenido de los arreglos en un archivo.
+\\
+\bigskip
+Esta función crea un archivo de texto plano (\texttt{*.txt}) y le asigna el nombre para el tiempo $t$.
+\end{frame}
+\begin{frame}[plain, allowframebreaks, fragile]
+\frametitle{La función \funcionazul{generaArchivo}}
+\begin{lstlisting}[caption=Código para generar archivos de texto plano con los arreglos solución, style=FormattedNumber, basicstyle=\linespread{1.1}\ttfamily=\small, columns=fullflexible]
+def generaArchivo(t, x, u, nx):
+    archivo = "solucion_\textunderscore_onda_\textunderscore_{0:4.2f}.txt".format(t)
+    out = open(archivo, "w")
+    out.write("t = {0:4.2f}\n".format(t))
+    out.write("     x          u\n")
+    for i in range(1, nx+1):
+        out.write("{0:10.5f}{1:10.5f}\n".format(x[i], u[i]))
+      
+    print('Se guardaron los datos en el archivo ' + archivo)
+    out.close
+\end{lstlisting}
+\end{frame}
+\begin{frame}[plain, allowframebreaks, fragile]
+\frametitle{Código principal}
+\begin{lstlisting}[caption=Código principal para el problema de la ecuación de onda, style=FormattedNumber, basicstyle=\linespread{1.1}\ttfamily=\small, columns=fullflexible]
+from moduloEcuacionOnda import Init, PropagOnda, generaArchivo
+
+c    = 10e0
+dk   = 1e0
+xmax = 100e0
+hx   = 5e-2
+tmax = 40e0
+ht   = 5e-3
+nout = 500
+
+nx = 2*(int)(xmax/hx+0.5)+1
+nt = (int)(tmax/ht+0.5)
+nx_2_ = int(nx/2)
+
+u_0_ = [_0_]*(nx+_1_)
+u_1_ = [_0_]*(nx+_1_)
+u  = [_0_]*(nx+_1_)
+x  = [_0_]*(nx+_1_)
+
+for i in range(1,nx+_1_): x[i] = (i-nx_2_-1)*hx
+
+Init(u_0_,u_1_,x,nx,c,dk,hx,ht) 
+generaArchivo(_0_,x,u_1_,nx)
+
+for it in range(1,nt+_1_):
+   t = it*ht
+   PropagOnda(u_0_,u_1_,u,nx,c,hx,ht)
+
+   for i in range(1,nx):
+       u_0_[i] = u_1_[i]
+       u_1_[i] = u[i]
+
+   if (it % nout == 0 or it == nt):
+      generaArchivo(t,x,u,nx)
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Aclaración del uso de la función \texttt{int}}
+En el código anterior, vimos el uso de la función \funcionazul{int} para obtener un valor entero:
+\begin{lstlisting}[caption=Uso de la función \texttt{int}, style=FormattedNumber, basicstyle=\linespread{1.1}\ttfamily=\small, columns=fullflexible]
+nx = 2*(int)(xmax/hx+0.5)+1
+
+nt = (int)(tmax/ht+0.5)
+
+nx_2_ = int(nx/2)
+\end{lstlisting}
+\end{frame}
+\begin{frame}
+\frametitle{Modo (\texttt{int})(valor)}
+De esta manera estamos usando la función \funcionazul{int} entre paréntesis, que es válido, la diferencia es la manera en la que se ocupan los argumentos.
+\\
+\bigskip
+De la forma \funcionazul{(int)(valor)}, tenemos \funcionazul{(int)(self)}, donde \texttt{self} se refiere al objeto sobre el cual se está invocando, en este caso, la función \funcionazul{int}.
+\end{frame}
+\begin{frame}
+\frametitle{Modo (\texttt{int})(valor)}
+Esta parte se comprende mejor cuando consideramos que el objeto que se invoca es una clase, pero hasta el momento, hemos manejado a la función \funcionazul{int}, como una función integrada de \python.
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Modo (\texttt{int})(valor)}
+Es válido manejarlo de esta manera, ya que ambas expresiones son equivalentes, es decir
+\begin{verbatim}
+(int)(valor) = int(valor)
+\end{verbatim}
+El lado derecho de la expresión, es el modo normal que hemos manejado en el curso para usar una función.
+\end{frame}
+\begin{frame}
+\frametitle{Datos obtenidos}
+Luego de haber ejecutado el programa, tendremos un conjunto de $17$ archivos de texto plano: \texttt{solucion\_onda\_0.00.txt}, \texttt{solucion\_onda\_2.50.txt}, etc.
+\end{frame}
+\begin{frame}
+\frametitle{Gráficas de la solución}
+Con cada archivo de datos, podemos elaborar una gráfica y ver el comportamiento de la propagación de la onda.
+\\
+\bigskip
+Para darle un poco más de emoción, mostraremos las gráficas de cada archivo de texto, para simular una animación.
+\end{frame}
+\begin{frame}[plain, allowframebreaks, fragile]
+\frametitle{Código para ver las gráficas}
+\begin{lstlisting}[caption=Código para mostrar las gráficas, style=FormattedNumber, basicstyle=\linespread{1.1}\ttfamily=\small, columns=fullflexible]
+mport numpy as np
+import matplotlib.pyplot as plt
+
+for i in np.arange(0.0, 42.0, 2.5):
+    tiempo = '{0:4.2f}'.format(i)
+    archivo = 'solucion_\textunderscore_onda_\textunderscore_' + tiempo + '.txt'
+    arreglos = np.genfromtxt(archivo, skip_\textunderscore_header=2)
+    
+    plt.clf()
+    plt.plot(arreglos[:,_0_],arreglos[:,_1_])
+    plt.axhline(y=0,ls='dashed',lw=0.75,c='k')
+    plt.title('Propagacion de la onda en t = ' + tiempo)
+    plt.xlabel('x')
+    plt.ylabel('u')
+    plt.xlim([-100,100])
+    plt.pause(1)
+plt.show()
+\end{lstlisting}
+\end{frame}
+\begin{frame}
+\frametitle{Gráficas obtenidas}
+A continuación se muestran las gráficas obtenidas con la solución de la propagación de la onda durante el intervalo de tiempo establecido.
+\end{frame}
+{\setbeamercolor{background canvas}{bg=white}
+\begin{frame}
+\begin{figure}
+	\centering
+	\includegraphics<1>[scale=0.6]{Imagenes/grafica_01_0_00.eps}
+	\includegraphics<2>[scale=0.6]{Imagenes/grafica_01_2_50.eps}
+	\includegraphics<3>[scale=0.6]{Imagenes/grafica_01_5_00.eps}
+	\includegraphics<4>[scale=0.6]{Imagenes/grafica_01_7_50.eps}
+	\includegraphics<5>[scale=0.6]{Imagenes/grafica_01_10_00.eps}
+	\includegraphics<6>[scale=0.6]{Imagenes/grafica_01_12_50.eps}
+	\includegraphics<7>[scale=0.6]{Imagenes/grafica_01_15_00.eps}
+	\includegraphics<8>[scale=0.6]{Imagenes/grafica_01_17_50.eps}
+	\includegraphics<9>[scale=0.6]{Imagenes/grafica_01_20_00.eps}
+	\includegraphics<10>[scale=0.6]{Imagenes/grafica_01_22_50.eps}
+	\includegraphics<11>[scale=0.6]{Imagenes/grafica_01_25_00.eps}
+	\includegraphics<12>[scale=0.6]{Imagenes/grafica_01_27_50.eps}
+	\includegraphics<13>[scale=0.6]{Imagenes/grafica_01_30_00.eps}
+	\includegraphics<14>[scale=0.6]{Imagenes/grafica_01_32_50.eps}
+	\includegraphics<15>[scale=0.6]{Imagenes/grafica_01_35_00.eps}
+	\includegraphics<16>[scale=0.6]{Imagenes/grafica_01_37_50.eps}
+	\includegraphics<17>[scale=0.6]{Imagenes/grafica_01_40_00.eps}
+\end{figure}
+\end{frame}
+}
+\begin{frame}
+\frametitle{Solución completa}
+Con lo que hemos revisado, se le ha dado solución a la ecuación de onda, una EDP hiperbólica, mediante el esquema de diferencias finitas.
+\end{frame}
+\begin{frame}
+\frametitle{Ejercicio a cuenta}
+Utilizando la misma configuración del problema anterior de la ecuación de onda, ahora configura el paquete de onda inicial, utilizando comparativamente los anchos de intervalo de número de onda $\Delta \: k = 0.5, 1$  y $5$.
+\end{frame}
+\begin{frame}
+\frametitle{Ejercicio a cuenta}
+Discute el efecto de cambiar $\Delta \: k$ y utiliza en cada caso la amplitud del paquete de onda final, que se reconstruye en el origen, para obtener un estimado del error.
+\\
+\bigskip
+Correlaciona la estimación del error con la media del ancho de los paquetes de onda iniciales.
+\end{frame}
+\end{document}
+
+
